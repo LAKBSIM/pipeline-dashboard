@@ -567,15 +567,15 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
       <span class="time-label"><i class="ti ti-clock" style="font-size:12px;vertical-align:-1px;margin-right:4px;"></i>Time range</span>
       <div class="time-pills">
         <button class="tp" onclick="setWRTime(0)">6h</button>
-        <button class="tp" onclick="setWRTime(1)">24h</button>
+        <button class="tp active" onclick="setWRTime(1)">24h</button>
         <button class="tp" onclick="setWRTime(2)">3d</button>
-        <button class="tp active" onclick="setWRTime(3)">7d</button>
+        <button class="tp" onclick="setWRTime(3)">7d</button>
         <button class="tp" onclick="setWRTime(4)">14d</button>
         <button class="tp" onclick="setWRTime(5)">30d</button>
         <button class="tp" onclick="setWRTime(6)">60d</button>
         <button class="tp" onclick="setWRTime(7)">90d</button>
       </div>
-      <span class="time-val" id="wr-time-val">Last 7 days</span>
+      <span class="time-val" id="wr-time-val">Last 24 hours</span>
     </div>
 
     <div class="kpi-grid" id="wr-kpis"></div>
@@ -694,7 +694,7 @@ let adoData       = {pipelines:[],builds:[]};
 let allRepos      = [];          // discovered from data
 let selectedRepos = new Set(["all"]);  // "all" = no filter
 let ccPeriodIdx   = 1;
-let wrTimeIdx     = 3;
+let wrTimeIdx     = 1; // default 24h — tenant-gain runs daily
 let wrBranch      = "all";
 let wrExpanded    = {};
 let ccTrendTab    = 0;
@@ -727,10 +727,15 @@ function goWR(){
 //  REPO HELPERS
 // ═══════════════════════════════════════════════
 function repoFromBuild(b){
-  // ADO returns repo name in repository.name field
+  // For tenant-gain pipelines, ADO uses folder name not repo name
+  // Check pipeline name prefix first, then repository name
+  const pipeName = (b.definition?.name || "").toLowerCase();
+  if(pipeName.startsWith("tenant-gain") || pipeName.includes("gain")) return "tenant-gain";
+  if(pipeName.startsWith("tenant-onboarding")) return "tenant-onboarding";
+  if(pipeName.startsWith("gain-scripts")) return "gain-scripts";
+  // Fall back to repository name for other pipelines
   return b.repository?.name
       || b.triggerInfo?.["ci.sourceBranch"]?.split("/")?.[0]
-      || b.project?.name
       || "";
 }
 
@@ -919,11 +924,15 @@ function filteredBuilds(timeIdx,branch="all"){
   const minTime=new Date(Date.now()-TIME_RANGES[timeIdx].hours*3600000);
   return adoData.builds.filter(b=>{
     // Filter to allowed pipeline IDs only
-    // Filter by pipeline name — only show tenant-gain pipelines
-    if(ALLOWED_PIPELINE_NAMES.size > 0) {
-      const pname = b.definition?.name || "";
-      if(!ALLOWED_PIPELINE_NAMES.has(pname)) return false;
-    }
+    // Filter by pipeline name prefix — show tenant-gain, tenant-onboarding, gain-scripts
+    const pname = (b.definition?.name || "").toLowerCase();
+    const isAllowed = pname.startsWith("tenant-gain")
+      || pname.startsWith("tenant-onboarding")
+      || pname.startsWith("gain-scripts")
+      || pname.includes("fetch_userdetails-gain")
+      || pname.includes("tenant-datamanagement-wiki")
+      || pname.includes("tenant-gain-api");
+    if(!isAllowed) return false;
     if(!buildMatchesRepoFilter(b)) return false;
     const inTime=new Date(b.finishTime||b.queueTime)>=minTime;
     if(!inTime) return false;
