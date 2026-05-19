@@ -883,12 +883,13 @@ function filteredBuilds(timeIdx,branch="all"){
   const minTime=new Date(Date.now()-TIME_RANGES[timeIdx].hours*3600000);
   return adoData.builds.filter(b=>{
     // Filter to allowed pipeline IDs only
-    // Filter to allowed pipeline IDs — handle both number and string from ADO API
-    if(ALLOWED_PIPELINE_IDS.size > 0) {
-      const bid = b.definition?.id ?? b.definition?.definitionId;
-      if(!bid) return false;
-      if(!ALLOWED_PIPELINE_IDS.has(Number(bid)) && !ALLOWED_PIPELINE_IDS.has(String(bid))) return false;
-    }
+    // Filter to allowed pipeline IDs — TEMPORARILY DISABLED to diagnose
+    // Re-enable once correct IDs are confirmed
+    // if(ALLOWED_PIPELINE_IDS.size > 0) {
+    //   const bid = b.definition?.id ?? b.definition?.definitionId;
+    //   if(!bid) return false;
+    //   if(!ALLOWED_PIPELINE_IDS.has(Number(bid)) && !ALLOWED_PIPELINE_IDS.has(String(bid))) return false;
+    // }
     if(!buildMatchesRepoFilter(b)) return false;
     const inTime=new Date(b.finishTime||b.queueTime)>=minTime;
     if(!inTime) return false;
