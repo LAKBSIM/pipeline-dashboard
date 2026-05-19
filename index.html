@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-/* ── RESET & BASE ── */
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --bg:#f9f9f8;--bg2:#f2f0eb;--bg3:#e8e6e1;
@@ -18,28 +17,56 @@
   --radius:8px;--radius-lg:12px;
 }
 @media(prefers-color-scheme:dark){
-  :root{
-    --bg:#1a1a18;--bg2:#222220;--bg3:#2a2a28;
-    --text:#f0ede8;--text2:#b4b2a9;--text3:#888780;
-    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);
-  }
+  :root{--bg:#1a1a18;--bg2:#222220;--bg3:#2a2a28;--text:#f0ede8;--text2:#b4b2a9;--text3:#888780;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);}
 }
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
-.app{max-width:900px;margin:0 auto;padding:1.5rem 1rem;}
+.app{max-width:960px;margin:0 auto;padding:1.5rem 1rem;}
 button{font-family:inherit;cursor:pointer;}
 input[type=range]{width:100%;accent-color:var(--text);}
+input[type=text],input[type=search],select{font-family:inherit;font-size:13px;background:var(--bg);color:var(--text);border:0.5px solid var(--border2);border-radius:var(--radius);padding:6px 10px;}
+input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border-color:var(--info);}
 
-/* ── PAGES ── */
-.page{display:none;} .page.active{display:block;}
+/* pages */
+.page{display:none;}.page.active{display:block;}
 
-/* ── LOADING ── */
+/* loading */
 .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:999;}
 .loading-spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-txt{font-size:13px;color:var(--text2);}
 .error-banner{background:var(--danger-bg);color:var(--danger);border-radius:var(--radius);padding:10px 14px;margin-bottom:1rem;font-size:13px;display:none;}
 
-/* ── TOKENS ── */
+/* global repo filter bar */
+.repo-filter-bar{background:var(--bg2);border-radius:var(--radius-lg);padding:.85rem 1.1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.repo-filter-label{font-size:12px;color:var(--text2);white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.repo-pills{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.repo-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:0.5px solid var(--border2);background:transparent;color:var(--text2);transition:all .15s;}
+.repo-pill.active{border-color:transparent;}
+.repo-pill.all.active{background:var(--text);color:var(--bg);}
+.repo-pill.gain.active{background:#E6F1FB;color:#185FA5;border-color:#B5D4F4;}
+.repo-pill.onboard.active{background:#EAF3DE;color:#3B6D11;border-color:#A8D57A;}
+.repo-pill.scripts.active{background:#FAEEDA;color:#854F0B;border-color:#FAC775;}
+.repo-pill.other.active{background:var(--bg3);color:var(--text2);}
+.repo-search{display:flex;align-items:center;gap:6px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);padding:5px 10px;min-width:200px;}
+.repo-search input{border:none;background:transparent;padding:0;font-size:12px;color:var(--text);outline:none;width:100%;}
+.repo-search i{color:var(--text3);font-size:13px;}
+
+/* table search */
+.table-search-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.table-search{display:flex;align-items:center;gap:6px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:5px 10px;min-width:220px;}
+.table-search input{border:none;background:transparent;padding:0;font-size:12px;color:var(--text);outline:none;width:100%;}
+.table-search i{color:var(--text3);font-size:13px;}
+.table-meta{font-size:11px;color:var(--text2);}
+
+/* pagination */
+.pagination{display:flex;align-items:center;gap:6px;justify-content:center;padding:12px 0;flex-wrap:wrap;}
+.pg-btn{background:transparent;border:0.5px solid var(--border2);border-radius:var(--radius);padding:4px 10px;font-size:12px;color:var(--text2);}
+.pg-btn:hover{background:var(--bg2);}
+.pg-btn.active{background:var(--text);color:var(--bg);border-color:var(--text);}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed;}
+.pg-info{font-size:12px;color:var(--text2);padding:0 8px;}
+
+/* common */
 .mc{background:var(--bg2);border-radius:var(--radius);padding:.8rem .9rem;}
 .mc-val{font-size:22px;font-weight:500;margin-bottom:2px;}
 .mc-lbl{font-size:11px;color:var(--text2);}
@@ -58,8 +85,13 @@ input[type=range]{width:100%;accent-color:var(--text);}
 .bp.main{background:var(--info-bg);color:var(--info);border-color:#B5D4F4;}
 .bp.hotfix{background:var(--warn-bg);color:var(--warn);border-color:#FAC775;}
 .bp.feat{background:#EEEDFE;color:#534AB7;border-color:#AFA9EC;}
+.repo-chip{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;}
+.repo-chip.gain{background:#E6F1FB;color:#185FA5;}
+.repo-chip.onboard{background:#EAF3DE;color:#3B6D11;}
+.repo-chip.scripts{background:#FAEEDA;color:#854F0B;}
+.repo-chip.other{background:var(--bg2);color:var(--text2);}
 .tbl{width:100%;border-collapse:collapse;font-size:12px;}
-.tbl th{text-align:left;padding:7px 8px;border-bottom:0.5px solid var(--border);color:var(--text2);font-weight:500;font-size:11px;}
+.tbl th{text-align:left;padding:7px 8px;border-bottom:0.5px solid var(--border);color:var(--text2);font-weight:500;font-size:11px;white-space:nowrap;}
 .tbl td{padding:8px 8px;border-bottom:0.5px solid var(--border);color:var(--text);vertical-align:middle;}
 .tbl tr:last-child td{border-bottom:none;}
 .tbl tr:hover td{background:var(--bg2);}
@@ -79,8 +111,12 @@ input[type=range]{width:100%;accent-color:var(--text);}
 .bt.active{background:var(--bg2);color:var(--text);font-weight:500;}
 .ttab{background:none;border:none;border-bottom:2px solid transparent;padding:7px 14px;font-size:12px;cursor:pointer;color:var(--text2);margin-bottom:-1px;}
 .ttab.active{color:var(--text);font-weight:500;border-bottom-color:var(--text);}
+.exp-btn{background:none;border:none;cursor:pointer;color:var(--text2);padding:0;font-size:13px;}
+.exp-inner td{padding:6px 8px 6px 24px;background:var(--bg2);border-bottom:0.5px solid var(--border);font-size:11px;color:var(--text2);}
+.exp-inner td:first-child{color:var(--text);}
+.exp-inner tr:last-child td{border-bottom:none;}
 
-/* ── LANDING ANIMATIONS ── */
+/* landing animations */
 @keyframes bar-rise{0%{transform:scaleY(0);}100%{transform:scaleY(1);}}
 @keyframes line-draw{0%{stroke-dashoffset:500;}100%{stroke-dashoffset:0;}}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.15;}}
@@ -93,15 +129,24 @@ input[type=range]{width:100%;accent-color:var(--text);}
 @keyframes radar-ring{0%{r:8;opacity:.9;}100%{r:100;opacity:0;}}
 @keyframes dot-pulse{0%,100%{r:3;}50%{r:5;}}
 @keyframes explosion{0%{r:3;opacity:1;}100%{r:20;opacity:0;}}
-@keyframes stamp-in{0%{transform:rotate(-1.5deg) scale(2.2);opacity:0;}60%{transform:rotate(-1.5deg) scale(.95);opacity:.7;}100%{transform:rotate(-1.5deg) scale(1);opacity:.55;}}
+@keyframes stamp-in{0%{transform:translateY(-10px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+@keyframes float-tag{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
 
-/* ── LANDING PAGE ── */
+/* landing */
 .landing{padding:2rem 0;}
 .land-header{text-align:center;margin-bottom:2rem;}
 .land-eyebrow{font-size:11px;letter-spacing:.14em;color:var(--text2);text-transform:uppercase;margin-bottom:6px;}
 .land-title{font-size:26px;font-weight:500;color:var(--text);margin-bottom:10px;}
-.land-tag{display:inline-block;border:1.5px solid var(--text);border-radius:3px;padding:4px 14px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text);font-weight:500;opacity:.55;transform:rotate(-1.5deg);margin-bottom:1.6rem;position:relative;animation:stamp-in .6s .3s cubic-bezier(.22,1,.36,1) both;}
-.land-tag::before{content:'';position:absolute;inset:-3px;border:1px solid var(--text);border-radius:4px;opacity:.25;}
+.land-tag{
+  display:inline-block;
+  background:linear-gradient(90deg,#185FA5 0%,#7F3FBF 50%,#A32D2D 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  border:none;border-radius:0;padding:4px 0;
+  font-size:17px;font-weight:700;letter-spacing:.02em;text-transform:none;
+  opacity:1;transform:none;margin-bottom:1.8rem;position:relative;
+  animation:stamp-in .7s .2s ease both, float-tag 3s 1s ease-in-out infinite;
+}
+.land-tag::before{display:none;}
 .land-sub{font-size:13px;color:var(--text2);}
 .land-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .lcard{border-radius:16px;overflow:hidden;cursor:pointer;border:0.5px solid var(--border);background:var(--bg);transition:border-color .25s,transform .2s;}
@@ -113,10 +158,10 @@ input[type=range]{width:100%;accent-color:var(--text);}
 .lcard-name{font-size:17px;font-weight:500;color:var(--text);margin-bottom:4px;}
 .lcard-desc{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
 .lcard-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:6px 14px;border-radius:8px;border:0.5px solid;background:transparent;}
-.btn-cc{border-color:#B5D4F4;color:#185FA5;} .btn-cc:hover{background:var(--info-bg);}
-.btn-wr{border-color:#F7C1C1;color:#A32D2D;} .btn-wr:hover{background:var(--danger-bg);}
+.btn-cc{border-color:#B5D4F4;color:#185FA5;}.btn-cc:hover{background:var(--info-bg);}
+.btn-wr{border-color:#F7C1C1;color:#A32D2D;}.btn-wr:hover{background:var(--danger-bg);}
 
-/* ── COMMAND CENTER ── */
+/* CC */
 .hero{border-radius:16px;overflow:hidden;margin-bottom:1.5rem;}
 .hero-footer{background:var(--bg);border:0.5px solid var(--border);border-top:none;border-radius:0 0 16px 16px;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
 .hstat-val{font-size:22px;font-weight:500;color:var(--text);}
@@ -160,7 +205,7 @@ input[type=range]{width:100%;accent-color:var(--text);}
 .pipe-health-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:1.5rem;}
 .team-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border);}
 .team-row:last-child{border-bottom:none;}
-.team-name{font-size:12px;width:150px;flex-shrink:0;}
+.team-name{font-size:12px;width:160px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .team-bar-wrap{flex:1;background:var(--bg2);border-radius:4px;height:8px;}
 .team-bar-fill{height:8px;border-radius:4px;transition:width .6s ease;}
 .team-rate{font-size:12px;font-weight:500;width:36px;text-align:right;flex-shrink:0;}
@@ -177,7 +222,7 @@ input[type=range]{width:100%;accent-color:var(--text);}
 .ic-lbl{font-size:11px;color:var(--text2);line-height:1.5;}
 .trend-tabs{display:flex;border-bottom:0.5px solid var(--border);margin-bottom:1rem;}
 
-/* ── WAR ROOM ── */
+/* WR */
 .time-bar{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;padding:.75rem 1rem;background:var(--bg2);border-radius:10px;flex-wrap:wrap;}
 .time-label{font-size:12px;color:var(--text2);white-space:nowrap;}
 .time-pills{display:flex;gap:5px;flex-wrap:wrap;}
@@ -195,17 +240,10 @@ input[type=range]{width:100%;accent-color:var(--text);}
 .bc-kv{font-size:15px;font-weight:500;}
 .bc-kl{font-size:10px;color:var(--text2);}
 .pb-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:3px;}
-.exp-btn{background:none;border:none;cursor:pointer;color:var(--text2);padding:0;font-size:13px;}
-.exp-inner td{padding:6px 8px 6px 24px;background:var(--bg2);border-bottom:0.5px solid var(--border);font-size:11px;color:var(--text2);}
-.exp-inner td:first-child{color:var(--text);}
-.exp-inner tr:last-child td{border-bottom:none;}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════ -->
-<!--  LOADING OVERLAY                          -->
-<!-- ══════════════════════════════════════════ -->
 <div class="loading-overlay" id="loadingOverlay" style="display:none;">
   <div class="loading-spinner"></div>
   <p class="loading-txt" id="loadingTxt">Connecting to Azure DevOps...</p>
@@ -214,20 +252,18 @@ input[type=range]{width:100%;accent-color:var(--text);}
 <div class="app">
   <div class="error-banner" id="errorBanner"></div>
 
-  <!-- ══════════════════════════════════════════ -->
-  <!--  PAGE 0 — LANDING                         -->
-  <!-- ══════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════ -->
+  <!--  LANDING                           -->
+  <!-- ═══════════════════════════════════ -->
   <div class="page active" id="page-landing">
     <div class="landing">
       <div class="land-header">
-        <p class="land-eyebrow">Simcorp · Azure DevOps</p>
+        <p class="land-eyebrow">Simcorp DMCore · Azure DevOps</p>
         <p class="land-title">Pipeline Intelligence</p>
-        <div class="land-tag">The future isn't coming&nbsp;&nbsp;·&nbsp;&nbsp;it is already here</div>
+        <div class="land-tag">The future isn't coming · it is already here</div>
         <p class="land-sub">Choose your view to begin</p>
       </div>
-
       <div class="land-cards">
-        <!-- Command Center card -->
         <div class="lcard cc" onclick="goCC()">
           <svg viewBox="0 0 330 220" width="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;">
             <defs>
@@ -279,8 +315,6 @@ input[type=range]{width:100%;accent-color:var(--text);}
             <button class="lcard-btn btn-cc"><i class="ti ti-arrow-right" style="font-size:12px;"></i>Enter</button>
           </div>
         </div>
-
-        <!-- War Room card -->
         <div class="lcard wr" onclick="goWR()">
           <svg viewBox="0 0 330 220" width="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;">
             <defs>
@@ -314,20 +348,13 @@ input[type=range]{width:100%;accent-color:var(--text);}
             <rect x="8" y="8" width="108" height="16" rx="3" fill="#1e0505" stroke="#4a1010" stroke-width=".5"/>
             <circle cx="18" cy="16" r="3" fill="#E24B4A" style="animation:blink 1s ease-in-out infinite;"/>
             <text x="25" y="19" font-size="7" fill="#E24B4A" opacity=".8" font-weight="500">WAR ROOM · ACTIVE</text>
-            <rect x="8" y="156" width="88" height="13" rx="3" fill="#1e0505" stroke="#4a1010" stroke-width=".5"/>
-            <text x="14" y="165" font-size="6.5" fill="#E24B4A" opacity=".7">INCIDENTS LIVE</text>
-            <rect x="8" y="30" width="100" height="48" rx="3" fill="#120404" stroke="#3a0e0e" stroke-width=".5"/>
-            <text x="14" y="42" font-size="6" fill="#E24B4A" opacity=".5">ACTIVE FAILURES</text>
-            <text x="14" y="54" font-size="6.5" fill="#E24B4A" opacity=".7" style="animation:blink 3s ease-in-out infinite;">● release-deploy-prod</text>
-            <text x="14" y="64" font-size="6.5" fill="#E24B4A" opacity=".5" style="animation:blink 3s .5s ease-in-out infinite;">● ui-test-suite</text>
-            <text x="14" y="74" font-size="6.5" fill="#EF9F27" opacity=".5" style="animation:blink 3s 1s ease-in-out infinite;">◐ data-etl-pipeline</text>
             <rect x="0" y="0" width="330" height="3" fill="#E24B4A" opacity=".5"/>
             <rect x="0" y="217" width="330" height="3" fill="#E24B4A" opacity=".3"/>
           </svg>
           <div class="lcard-footer">
             <p class="lcard-tag" style="color:#A32D2D;"><i class="ti ti-radar" style="font-size:10px;vertical-align:-1px;margin-right:3px"></i>Operations</p>
             <p class="lcard-name">War Room</p>
-            <p class="lcard-desc">Live pipeline radar. Branch health by main & hotfix/*, trigger types, failure tracking and recent runs.</p>
+            <p class="lcard-desc">Live pipeline radar. Branch health by main & hotfix/*, repo filter, search and paginated run history.</p>
             <button class="lcard-btn btn-wr"><i class="ti ti-arrow-right" style="font-size:12px;"></i>Enter</button>
           </div>
         </div>
@@ -335,11 +362,11 @@ input[type=range]{width:100%;accent-color:var(--text);}
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════ -->
-  <!--  PAGE 1 — COMMAND CENTER                  -->
-  <!-- ══════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════ -->
+  <!--  COMMAND CENTER                    -->
+  <!-- ═══════════════════════════════════ -->
   <div class="page" id="page-cc">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1.5rem;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1.25rem;">
       <div style="display:flex;align-items:center;gap:10px;">
         <button class="back-btn" onclick="goHome()"><i class="ti ti-arrow-left" style="font-size:11px;"></i> Home</button>
         <div>
@@ -347,17 +374,27 @@ input[type=range]{width:100%;accent-color:var(--text);}
             <span class="badge bi"><i class="ti ti-presentation-analytics" style="font-size:10px;vertical-align:-1px;margin-right:3px"></i>Command Center</span>
             <p style="font-size:18px;font-weight:500;">Executive overview</p>
           </div>
-          <p style="font-size:12px;color:var(--text2);margin-top:2px;">SimCorpCloud · Project Unicorn · Pipeline confidence report</p>
+          <p style="font-size:12px;color:var(--text2);margin-top:2px;">Simcorp DMCore · Azure DevOps · Project Unicorn</p>
         </div>
       </div>
-      <div style="display:flex;gap:6px;">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
         <button class="pbtn" onclick="setCCPeriod(0,this)">7 days</button>
         <button class="pbtn active" onclick="setCCPeriod(1,this)">30 days</button>
         <button class="pbtn" onclick="setCCPeriod(2,this)">90 days</button>
       </div>
     </div>
 
-    <!-- Hero scene -->
+    <!-- Global repo filter -->
+    <div class="repo-filter-bar" id="cc-repo-bar">
+      <span class="repo-filter-label"><i class="ti ti-filter" style="font-size:12px;"></i> Repos</span>
+      <div class="repo-pills" id="cc-repo-pills"></div>
+      <div class="repo-search">
+        <i class="ti ti-search"></i>
+        <input type="search" id="cc-global-search" placeholder="Search pipelines..." oninput="renderCC()"/>
+      </div>
+    </div>
+
+    <!-- Hero -->
     <div class="hero">
       <svg viewBox="0 0 680 200" width="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;">
         <defs>
@@ -387,27 +424,26 @@ input[type=range]{width:100%;accent-color:var(--text);}
           <circle cx="431" cy="48" r="4" fill="#60CFFF" opacity="0" style="animation:blink 0s 2.2s forwards;"/>
           <circle cx="431" cy="48" r="4" fill="none" stroke="#60CFFF" stroke-width="1.5" opacity="0" style="animation:cc-ping 1.4s 2.4s ease-out infinite;"/>
           <rect x="20" y="16" width="440" height="2" fill="#60CFFF" opacity=".08" style="animation:scan-h 5s 1s linear infinite;"/>
-          <text x="24" y="30" font-size="8" fill="#60CFFF" opacity=".6" font-weight="500">PIPELINE SUCCESS TREND · IMPROVING</text>
+          <text x="24" y="30" font-size="8" fill="#60CFFF" opacity=".6" font-weight="500">PIPELINE HEALTH · LIVE</text>
           <text x="350" y="30" font-size="7" fill="#97C459" opacity=".7" style="animation:alert-flash 3s ease-in-out infinite;">↑ CONFIDENCE HIGH</text>
         </g>
         <rect x="14" y="182" width="448" height="12" rx="2" fill="#080f1e"/>
         <rect x="0" y="0" width="680" height="3" fill="#378ADD" opacity=".5"/>
-        <text x="340" y="11" font-size="7" fill="#60CFFF" opacity=".35" text-anchor="middle" letter-spacing="2">SIMCORP · COMMAND CENTER · PROJECT UNICORN</text>
+        <text x="340" y="11" font-size="7" fill="#60CFFF" opacity=".35" text-anchor="middle" letter-spacing="2">SIMCORP DMCORE · AZURE DEVOPS · PROJECT UNICORN</text>
         <circle cx="480" cy="8" r="2.5" fill="#97C459" style="animation:blink 1.5s ease-in-out infinite;"/>
         <text x="486" y="11" font-size="6" fill="#97C459" opacity=".6">LIVE</text>
         <rect x="468" y="10" width="200" height="186" rx="5" fill="#060d1a" stroke="#1e4080" stroke-width=".5"/>
         <text x="476" y="24" font-size="7" fill="#60CFFF" opacity=".5" font-weight="500" letter-spacing="1">SYSTEM STATUS</text>
         <circle cx="476" cy="38" r="3" fill="#97C459" style="animation:blink 2s ease-in-out infinite;"/><text x="484" y="42" font-size="7" fill="#97C459" opacity=".7">ADO Connected</text>
-        <circle cx="476" cy="52" r="3" fill="#97C459" style="animation:blink 2.3s .2s ease-in-out infinite;"/><text x="484" y="56" font-size="7" fill="#97C459" opacity=".7">Azure Monitor</text>
+        <circle cx="476" cy="52" r="3" fill="#97C459" style="animation:blink 2.3s .2s ease-in-out infinite;"/><text x="484" y="56" font-size="7" fill="#97C459" opacity=".7">Azure Monitor OK</text>
         <circle cx="476" cy="66" r="3" fill="#97C459" style="animation:blink 1.8s .4s ease-in-out infinite;"/><text x="484" y="70" font-size="7" fill="#97C459" opacity=".7">Agent Pool OK</text>
-        <circle cx="476" cy="80" r="3" fill="#EF9F27" style="animation:blink 1.5s .6s ease-in-out infinite;"/><text x="484" y="84" font-size="7" fill="#EF9F27" opacity=".7">Alerts: 2 active</text>
-        <line x1="476" y1="94" x2="660" y2="94" stroke="#0d2040" stroke-width=".5"/>
-        <text x="476" y="106" font-size="7" fill="#60CFFF" opacity=".5" font-weight="500" letter-spacing="1">LIVE PIPELINES</text>
-        <text x="476" y="120" font-size="7" fill="#60CFFF" opacity=".4" id="svgP1">Loading...</text>
-        <text x="476" y="132" font-size="7" fill="#60CFFF" opacity=".4" id="svgP2"></text>
-        <text x="476" y="144" font-size="7" fill="#60CFFF" opacity=".4" id="svgP3"></text>
-        <text x="476" y="156" font-size="7" fill="#60CFFF" opacity=".4" id="svgP4"></text>
-        <text x="476" y="168" font-size="7" fill="#60CFFF" opacity=".4" id="svgP5"></text>
+        <line x1="476" y1="82" x2="660" y2="82" stroke="#0d2040" stroke-width=".5"/>
+        <text x="476" y="94" font-size="7" fill="#60CFFF" opacity=".5" font-weight="500" letter-spacing="1">LIVE PIPELINES</text>
+        <text x="476" y="108" font-size="7" fill="#60CFFF" opacity=".4" id="svgP1">—</text>
+        <text x="476" y="120" font-size="7" fill="#60CFFF" opacity=".4" id="svgP2">—</text>
+        <text x="476" y="132" font-size="7" fill="#60CFFF" opacity=".4" id="svgP3">—</text>
+        <text x="476" y="144" font-size="7" fill="#60CFFF" opacity=".4" id="svgP4">—</text>
+        <text x="476" y="156" font-size="7" fill="#60CFFF" opacity=".4" id="svgP5">—</text>
         <ellipse cx="240" cy="195" rx="220" ry="14" fill="#030810" opacity=".8"/>
         <g style="animation:walk-in .6s .2s ease forwards;opacity:0;"><rect x="72" y="166" width="12" height="26" rx="3" fill="#1a2a44"/><circle cx="78" cy="160" r="7" fill="#c8956c"/><rect x="70" y="175" width="5" height="14" rx="2" fill="#142038"/><rect x="79" y="172" width="9" height="3" rx="1" fill="#1e3050" style="transform-origin:79px 173px;transform:rotate(-18deg);"/><rect x="73" y="192" width="4" height="7" rx="2" fill="#0d1828"/><rect x="79" y="192" width="4" height="7" rx="2" fill="#0d1828"/></g>
         <g style="animation:walk-in .6s .4s ease forwards;opacity:0;"><rect x="112" y="163" width="12" height="28" rx="3" fill="#243050"/><circle cx="118" cy="157" r="7" fill="#d4a574"/><rect x="110" y="173" width="14" height="3" rx="1" fill="#1e2e50" style="transform-origin:110px 174px;transform:rotate(20deg);"/><rect x="116" y="174" width="5" height="16" rx="2" fill="#1a2844"/><rect x="113" y="191" width="4" height="7" rx="2" fill="#0d1828"/><rect x="119" y="191" width="4" height="7" rx="2" fill="#0d1828"/></g>
@@ -422,43 +458,34 @@ input[type=range]{width:100%;accent-color:var(--text);}
         <div class="vdiv" style="height:36px;"></div>
         <div><p class="hstat-val g" id="cc-uptime">99.2%</p><p class="hstat-lbl">System uptime</p></div>
         <div class="vdiv" style="height:36px;"></div>
-        <div><p class="hstat-val b" id="cc-pipes">—</p><p class="hstat-lbl">Active pipelines</p></div>
+        <div><p class="hstat-val b" id="cc-pipes">—</p><p class="hstat-lbl">Pipelines</p></div>
         <div class="vdiv" style="height:36px;"></div>
-        <div><p class="hstat-val a" id="cc-mttr">—</p><p class="hstat-lbl">Avg recovery time</p></div>
+        <div><p class="hstat-val a" id="cc-mttr">—</p><p class="hstat-lbl">Avg duration</p></div>
         <div class="vdiv" style="height:36px;"></div>
-        <div><p class="hstat-val g" id="cc-trend">—</p><p class="hstat-lbl">vs prior period</p></div>
+        <div><p class="hstat-val g" id="cc-trend">—</p><p class="hstat-lbl">Trend</p></div>
       </div>
     </div>
 
-    <!-- Confidence banner -->
     <div class="conf-banner">
-      <div>
-        <p class="hstat-lbl" style="margin-bottom:2px;">Confidence score</p>
-        <p class="conf-score" id="cc-conf-score">—</p>
-        <p style="font-size:11px;color:var(--success);font-weight:500;" id="cc-conf-label">Calculating...</p>
-      </div>
+      <div><p class="hstat-lbl" style="margin-bottom:2px;">Confidence score</p><p class="conf-score" id="cc-conf-score">—</p><p style="font-size:11px;font-weight:500;" id="cc-conf-label">Calculating...</p></div>
       <div class="vdiv" style="height:80px;"></div>
       <div class="conf-bars" id="cc-conf-bars"></div>
       <div class="vdiv" style="height:80px;"></div>
-      <div style="flex:1;min-width:160px;">
-        <p style="font-size:12px;font-weight:500;margin-bottom:4px;">What this means</p>
-        <p style="font-size:12px;color:var(--text2);line-height:1.6;" id="cc-conf-meaning">Loading pipeline data from Azure DevOps...</p>
-      </div>
+      <div style="flex:1;min-width:160px;"><p style="font-size:12px;font-weight:500;margin-bottom:4px;">What this means</p><p style="font-size:12px;color:var(--text2);line-height:1.6;" id="cc-conf-meaning">Loading...</p></div>
     </div>
 
-    <!-- Cost intelligence -->
     <div class="cost-section">
       <div class="cost-header">
-        <p class="cost-header-title"><i class="ti ti-currency-dollar" style="font-size:14px;"></i>Cost intelligence — pipeline failures</p>
+        <p class="cost-header-title"><i class="ti ti-currency-dollar" style="font-size:14px;"></i>Cost intelligence</p>
         <p style="font-size:11px;color:#A32D2D;opacity:.8;" id="cc-cost-sub">Agent compute waste from failed runs</p>
       </div>
       <div class="cost-body">
-        <div class="cost-kpis" id="cc-cost-kpis"><div class="ck"><p class="ck-val" style="color:var(--text2);">—</p><p class="ck-lbl">Loading...</p></div></div>
+        <div class="cost-kpis" id="cc-cost-kpis"></div>
         <div class="flow-row" id="cc-cost-flow"></div>
         <div style="border-top:0.5px solid var(--border);padding-top:1.1rem;">
-          <p style="font-size:13px;font-weight:500;margin-bottom:3px;display:flex;align-items:center;gap:6px;"><i class="ti ti-calculator" style="font-size:13px;"></i>Savings simulator</p>
+          <p style="font-size:13px;font-weight:500;margin-bottom:3px;display:flex;align-items:center;gap:6px;"><i class="ti ti-calculator"></i>Savings simulator</p>
           <p style="font-size:11px;color:var(--text2);margin-bottom:1rem;">Adjust sliders to model potential monthly savings.</p>
-          <div class="sim-row"><span class="sim-lbl">Current failure rate</span><input type="range" min="5" max="50" step="1" id="s1" oninput="calcSim()"><span class="sim-val" id="o1">24%</span></div>
+          <div class="sim-row"><span class="sim-lbl">Current failure rate</span><input type="range" min="5" max="50" step="1" id="s1" oninput="calcSim()"><span class="sim-val" id="o1">—</span></div>
           <div class="sim-row"><span class="sim-lbl">Target failure rate</span><input type="range" min="1" max="40" step="1" id="s2" oninput="calcSim()"><span class="sim-val" id="o2">10%</span></div>
           <div class="sim-row"><span class="sim-lbl">Agent cost / min (USD)</span><input type="range" min="1" max="20" step="1" id="s3" oninput="calcSim()"><span class="sim-val" id="o3">$0.05</span></div>
           <div class="sim-row"><span class="sim-lbl">Monthly pipeline runs</span><input type="range" min="100" max="3000" step="50" id="s4" oninput="calcSim()"><span class="sim-val" id="o4">—</span></div>
@@ -479,24 +506,22 @@ input[type=range]{width:100%;accent-color:var(--text);}
       <div class="trend-tabs">
         <button class="ttab active" id="tt0" onclick="setCCTrendTab(0)">Success rate</button>
         <button class="ttab" id="tt1" onclick="setCCTrendTab(1)">Run volume</button>
-        <button class="ttab" id="tt2" onclick="setCCTrendTab(2)">Recovery time</button>
+        <button class="ttab" id="tt2" onclick="setCCTrendTab(2)">Failure rate</button>
       </div>
       <div class="leg" id="cc-trend-leg"></div>
-      <div style="position:relative;width:100%;height:200px;"><canvas id="ccTrendChart" role="img" aria-label="Trend chart">Trend.</canvas></div>
+      <div style="position:relative;width:100%;height:200px;"><canvas id="ccTrendChart"></canvas></div>
     </div>
 
     <p class="section-label">All pipelines at a glance</p>
     <div class="card-full" id="cc-team-health"></div>
 
     <div class="row2">
-      <div class="card">
-        <p class="ct">Run distribution</p>
+      <div class="card"><p class="ct">Run distribution</p>
         <div class="leg"><span><span class="ld" style="background:#97C459;"></span>Success</span><span><span class="ld" style="background:#E24B4A;"></span>Failed</span><span><span class="ld" style="background:#EF9F27;"></span>Cancelled</span></div>
-        <div style="position:relative;width:100%;height:180px;"><canvas id="ccDonut" role="img" aria-label="Run distribution donut chart">Run distribution.</canvas></div>
+        <div style="position:relative;width:100%;height:180px;"><canvas id="ccDonut"></canvas></div>
       </div>
-      <div class="card">
-        <p class="ct">Top failure causes</p>
-        <div style="position:relative;width:100%;height:180px;"><canvas id="ccCause" role="img" aria-label="Failure causes bar chart">Failure causes.</canvas></div>
+      <div class="card"><p class="ct">Top failure causes</p>
+        <div style="position:relative;width:100%;height:180px;"><canvas id="ccCause"></canvas></div>
       </div>
     </div>
 
@@ -504,9 +529,9 @@ input[type=range]{width:100%;accent-color:var(--text);}
     <div class="insight-grid" id="cc-insights"></div>
   </div>
 
-  <!-- ══════════════════════════════════════════ -->
-  <!--  PAGE 2 — WAR ROOM                        -->
-  <!-- ══════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════ -->
+  <!--  WAR ROOM                          -->
+  <!-- ═══════════════════════════════════ -->
   <div class="page" id="page-wr">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1.25rem;">
       <div style="display:flex;align-items:center;gap:10px;">
@@ -516,7 +541,7 @@ input[type=range]{width:100%;accent-color:var(--text);}
             <span class="badge bd"><i class="ti ti-radar" style="font-size:10px;vertical-align:-1px;margin-right:3px"></i>War Room</span>
             <p style="font-size:18px;font-weight:500;">Pipeline operations</p>
           </div>
-          <p style="font-size:12px;color:var(--text2);margin-top:2px;">SimCorpCloud · Project Unicorn · Live branch health</p>
+          <p style="font-size:12px;color:var(--text2);margin-top:2px;">Simcorp DMCore · Azure DevOps · Live branch health</p>
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
@@ -525,6 +550,16 @@ input[type=range]{width:100%;accent-color:var(--text);}
           <button class="bt" id="br-main" onclick="setWRBranch('main')"><i class="ti ti-git-commit" style="font-size:11px;vertical-align:-1px;"></i> main</button>
           <button class="bt" id="br-hotfix" onclick="setWRBranch('hotfix')"><i class="ti ti-urgent" style="font-size:11px;vertical-align:-1px;"></i> hotfix/*</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Global repo filter -->
+    <div class="repo-filter-bar" id="wr-repo-bar">
+      <span class="repo-filter-label"><i class="ti ti-filter" style="font-size:12px;"></i> Repos</span>
+      <div class="repo-pills" id="wr-repo-pills"></div>
+      <div class="repo-search">
+        <i class="ti ti-search"></i>
+        <input type="search" id="wr-global-search" placeholder="Search pipelines, branches..." oninput="renderWR()"/>
       </div>
     </div>
 
@@ -544,341 +579,397 @@ input[type=range]{width:100%;accent-color:var(--text);}
     </div>
 
     <div class="kpi-grid" id="wr-kpis"></div>
-    <div class="wr-insight" id="wr-insight"><span><i class="ti ti-sparkles" style="font-size:10px;vertical-align:-1px;margin-right:3px;"></i>War Room intel</span><span id="wr-insight-txt">Loading real-time data from Azure DevOps...</span></div>
+    <div class="wr-insight"><span><i class="ti ti-sparkles" style="font-size:10px;vertical-align:-1px;margin-right:3px;"></i>War Room intel</span><span id="wr-insight-txt">Loading...</span></div>
 
     <div class="row2">
-      <div class="card">
-        <p class="ct">Run trend</p>
+      <div class="card"><p class="ct">Run trend</p>
         <div class="leg"><span><span class="ld" style="background:#97C459;"></span>Success</span><span><span class="ld" style="background:#E24B4A;"></span>Failed</span><span><span class="ld" style="background:#EF9F27;"></span>Cancelled</span></div>
-        <div style="position:relative;width:100%;height:180px;"><canvas id="wrTrend" role="img" aria-label="Run trend chart">Run trend.</canvas></div>
+        <div style="position:relative;width:100%;height:180px;"><canvas id="wrTrend"></canvas></div>
       </div>
-      <div class="card">
-        <p class="ct">Failure reasons</p>
-        <div style="position:relative;width:100%;height:180px;"><canvas id="wrCause" role="img" aria-label="Failure causes">Failure causes.</canvas></div>
+      <div class="card"><p class="ct">Failure reasons</p>
+        <div style="position:relative;width:100%;height:180px;"><canvas id="wrCause"></canvas></div>
       </div>
     </div>
 
     <div id="wr-branch-section"></div>
 
     <div class="card-full">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div class="table-search-bar">
         <p class="ct" style="margin:0;">Pipeline breakdown</p>
-        <span style="font-size:11px;color:var(--text2);">Click row to expand branches</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="table-search">
+            <i class="ti ti-search"></i>
+            <input type="search" id="wr-pipe-search" placeholder="Search pipelines..." oninput="renderWRPipeTable()"/>
+          </div>
+          <span class="table-meta" id="wr-pipe-meta"></span>
+        </div>
       </div>
       <table class="tbl"><thead><tr>
         <th style="width:20px;"></th>
-        <th>Pipeline</th><th>Branches</th><th>Runs</th><th>Success rate</th><th>Failed</th><th>Avg duration</th><th>Last result</th>
+        <th>Pipeline</th><th>Repo</th><th>Branches</th><th>Runs</th><th>Success rate</th><th>Failed</th><th>Avg duration</th><th>Last result</th>
       </tr></thead><tbody id="wr-pipe-tbody"></tbody></table>
+      <div class="pagination" id="wr-pipe-pg"></div>
     </div>
 
     <div class="card-full">
-      <p class="ct">Recent runs — live from ADO</p>
+      <div class="table-search-bar">
+        <p class="ct" style="margin:0;">All runs</p>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="table-search">
+            <i class="ti ti-search"></i>
+            <input type="search" id="wr-run-search" placeholder="Search runs, branches, reasons..." oninput="renderWRRunsTable()"/>
+          </div>
+          <span class="table-meta" id="wr-run-meta"></span>
+        </div>
+      </div>
       <table class="tbl"><thead><tr>
-        <th>Run ID</th><th>Pipeline</th><th>Branch</th><th>Triggered by</th><th>Duration</th><th>Result</th><th>Reason</th>
+        <th>Run ID</th><th>Pipeline</th><th>Repo</th><th>Branch</th><th>Triggered by</th><th>Duration</th><th>Result</th><th>Failure reason</th>
       </tr></thead><tbody id="wr-recent-tbody"></tbody></table>
+      <div class="pagination" id="wr-run-pg"></div>
     </div>
   </div>
 </div>
 
 <script>
+// ═══════════════════════════════════════════════
+//  CONFIG
 // ══════════════════════════════════════════════
-//  CONFIG — update FUNCTION_URL after deploying
-//  your Azure Function
-// ══════════════════════════════════════════════
-const FUNCTION_URL = "https://YOUR-FUNCTION-APP.azurewebsites.net/api/PipelineDashboard";
-const ORG = "SimCorpCloud";
+const FUNCTION_URL = "https://dmcore-pipeline-proxy-test-bfgcevedfpaeg5ha.westeurope-01.azurewebsites.net/api/PipelineDashboard";
+const ORG     = "SimCorpCloud";
 const PROJECT = "Project Unicorn";
+const PAGE_SIZE = 50;
 
-// Time range definitions
+// Target repos — highlighted in filter
+const TARGET_REPOS = ["tenant-gain","tenant-onboarding","gain-scripts"];
+
 const TIME_RANGES = [
-  { label: "Last 6 hours",  hours: 6 },
-  { label: "Last 24 hours", hours: 24 },
-  { label: "Last 3 days",   hours: 72 },
-  { label: "Last 7 days",   hours: 168 },
-  { label: "Last 14 days",  hours: 336 },
-  { label: "Last 30 days",  hours: 720 },
-  { label: "Last 60 days",  hours: 1440 },
-  { label: "Last 90 days",  hours: 2160 },
+  {label:"Last 6 hours",  hours:6},
+  {label:"Last 24 hours", hours:24},
+  {label:"Last 3 days",   hours:72},
+  {label:"Last 7 days",   hours:168},
+  {label:"Last 14 days",  hours:336},
+  {label:"Last 30 days",  hours:720},
+  {label:"Last 60 days",  hours:1440},
+  {label:"Last 90 days",  hours:2160},
 ];
 
-// App state
-let adoData     = { pipelines: [], builds: [] };
-let ccPeriodIdx = 1;
-let wrTimeIdx   = 3;
-let wrBranch    = "all";
-let wrExpanded  = {};
-let ccTrendTab  = 0;
-let ccCharts    = [];
-let wrCharts    = [];
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let adoData       = {pipelines:[],builds:[]};
+let allRepos      = [];          // discovered from data
+let selectedRepos = new Set(["all"]);  // "all" = no filter
+let ccPeriodIdx   = 1;
+let wrTimeIdx     = 3;
+let wrBranch      = "all";
+let wrExpanded    = {};
+let ccTrendTab    = 0;
+let ccCharts      = [];
+let wrCharts      = [];
+let wrPipePage    = 1;
+let wrRunPage     = 1;
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  NAVIGATION
-// ══════════════════════════════════════════════
-function showPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+// ═══════════════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
 }
-
-function goHome() { showPage("page-landing"); }
-
-function goCC() {
+function goHome(){showPage("page-landing");}
+function goCC(){
   showPage("page-cc");
-  if (!adoData.builds.length) loadData().then(renderCC);
-  else renderCC();
+  if(!adoData.builds.length) loadData().then(()=>{buildRepoList();renderRepoPills("cc");renderCC();});
+  else{buildRepoList();renderRepoPills("cc");renderCC();}
+}
+function goWR(){
+  showPage("page-wr");
+  if(!adoData.builds.length) loadData().then(()=>{buildRepoList();renderRepoPills("wr");renderWR();});
+  else{buildRepoList();renderRepoPills("wr");renderWR();}
 }
 
-function goWR() {
-  showPage("page-wr");
-  if (!adoData.builds.length) loadData().then(renderWR);
+// ═══════════════════════════════════════════════
+//  REPO HELPERS
+// ═══════════════════════════════════════════════
+function repoFromBuild(b){
+  // ADO build objects may carry repository info in different places
+  return b.repository?.name || b.triggerInfo?.["ci.sourceBranch"]?.split("/")?.[0] || "";
+}
+
+function repoClass(name){
+  if(!name) return "other";
+  if(name.includes("tenant-gain")) return "gain";
+  if(name.includes("tenant-onboarding")) return "onboard";
+  if(name.includes("gain-scripts")) return "scripts";
+  return "other";
+}
+
+function buildRepoList(){
+  const repoSet = new Set();
+  adoData.builds.forEach(b=>{
+    const r = repoFromBuild(b);
+    if(r) repoSet.add(r);
+  });
+  // Sort — target repos first
+  allRepos = [...repoSet].sort((a,b)=>{
+    const aT = TARGET_REPOS.some(t=>a.includes(t)) ? 0 : 1;
+    const bT = TARGET_REPOS.some(t=>b.includes(t)) ? 0 : 1;
+    return aT - bT || a.localeCompare(b);
+  });
+}
+
+function renderRepoPills(view){
+  const container = document.getElementById(`${view}-repo-pills`);
+  if(!container) return;
+  const pills = [
+    `<button class="repo-pill all ${selectedRepos.has('all')?'active':''}" onclick="toggleRepo('all','${view}')">All repos</button>`,
+    ...allRepos.map(r=>{
+      const cls = repoClass(r);
+      const active = selectedRepos.has(r) ? "active" : "";
+      const short = r.length > 20 ? r.slice(0,20)+"…" : r;
+      return `<button class="repo-pill ${cls} ${active}" onclick="toggleRepo('${r}','${view}')" title="${r}">${short}</button>`;
+    })
+  ];
+  container.innerHTML = pills.join("");
+}
+
+function toggleRepo(repo, view){
+  if(repo === "all"){
+    selectedRepos = new Set(["all"]);
+  } else {
+    selectedRepos.delete("all");
+    if(selectedRepos.has(repo)) selectedRepos.delete(repo);
+    else selectedRepos.add(repo);
+    if(selectedRepos.size === 0) selectedRepos = new Set(["all"]);
+  }
+  renderRepoPills("cc");
+  renderRepoPills("wr");
+  wrPipePage = 1; wrRunPage = 1;
+  if(view==="cc") renderCC();
   else renderWR();
 }
 
-// ══════════════════════════════════════════════
+function buildMatchesRepoFilter(b){
+  if(selectedRepos.has("all")) return true;
+  const repo = repoFromBuild(b);
+  return [...selectedRepos].some(r => repo.includes(r) || r.includes(repo));
+}
+
+// ═══════════════════════════════════════════════
 //  DATA FETCHING
-// ══════════════════════════════════════════════
-function showLoading(msg) {
-  document.getElementById("loadingTxt").textContent = msg;
-  document.getElementById("loadingOverlay").style.display = "flex";
-}
-function hideLoading() {
-  document.getElementById("loadingOverlay").style.display = "none";
-}
-function showError(msg) {
-  const b = document.getElementById("errorBanner");
-  b.textContent = "⚠ " + msg;
-  b.style.display = "block";
-  setTimeout(() => b.style.display = "none", 6000);
-}
+// ═══════════════════════════════════════════════
+function showLoading(msg){document.getElementById("loadingTxt").textContent=msg;document.getElementById("loadingOverlay").style.display="flex";}
+function hideLoading(){document.getElementById("loadingOverlay").style.display="none";}
+function showError(msg){const b=document.getElementById("errorBanner");b.textContent="⚠ "+msg;b.style.display="block";setTimeout(()=>b.style.display="none",8000);}
 
-async function fetchADO(endpoint, extraParams = "") {
-  const minTime = getMinTime(wrTimeIdx);
-  const url = `${FUNCTION_URL}?endpoint=${endpoint}&minTime=${minTime}${extraParams}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`ADO API error: ${res.status}`);
-  return res.json();
-}
-
-function getMinTime(timeIdx) {
-  const h = TIME_RANGES[timeIdx].hours;
-  const d = new Date(Date.now() - h * 3600 * 1000);
+function getMinTime(idx){
+  const d=new Date(Date.now()-TIME_RANGES[idx].hours*3600*1000);
   return d.toISOString();
 }
 
-async function loadData() {
-  showLoading("Connecting to Azure DevOps — Project Unicorn...");
-  try {
-    const summary = await fetchADO("summary");
-    adoData.pipelines = summary.pipelines || [];
-    adoData.builds    = summary.builds    || [];
-
-    // Update SVG pipeline names in hero
-    adoData.pipelines.slice(0, 5).forEach((p, i) => {
-      const el = document.getElementById(`svgP${i + 1}`);
-      if (el) el.textContent = p.name || "";
-    });
-  } catch (e) {
-    showError("Could not reach Azure DevOps. Check your Azure Function URL and PAT. Using demo data.");
-    adoData = getDemoData();
-  } finally {
-    hideLoading();
-  }
+async function fetchADO(endpoint,extra=""){
+  const minTime=getMinTime(wrTimeIdx);
+  const url=`${FUNCTION_URL}&endpoint=${endpoint}&minTime=${minTime}${extra}`;
+  const res=await fetch(url);
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
 }
 
-// ══════════════════════════════════════════════
-//  DEMO DATA (shown when ADO is not yet wired)
-// ══════════════════════════════════════════════
-function getDemoData() {
-  return {
-    pipelines: [
-      { id: 1, name: "core-build-ci" },
-      { id: 2, name: "release-deploy-prod" },
-      { id: 3, name: "infra-terraform-apply" },
-      { id: 4, name: "data-etl-pipeline" },
-      { id: 5, name: "ui-test-suite" },
-    ],
-    builds: generateDemoBuilds(),
+async function loadData(){
+  showLoading("Fetching live data from Simcorp DMCore · Azure DevOps...");
+  try{
+    const summary=await fetchADO("summary");
+    adoData.pipelines=summary.pipelines||[];
+    adoData.builds=summary.builds||[];
+    // Update SVG pipeline names
+    adoData.pipelines.slice(0,5).forEach((p,i)=>{
+      const el=document.getElementById(`svgP${i+1}`);
+      if(el) el.textContent=p.name||"";
+    });
+  }catch(e){
+    showError("Could not reach Azure DevOps. Showing demo data. Error: "+e.message);
+    adoData=getDemoData();
+  }finally{hideLoading();}
+}
+
+// ═══════════════════════════════════════════════
+//  DEMO DATA
+// ═══════════════════════════════════════════════
+function getDemoData(){
+  const pipes=["tenant-gain-ci","tenant-gain-deploy","tenant-onboarding-build","tenant-onboarding-test","gain-scripts-validate","gain-scripts-deploy"];
+  const repos=["tenant-gain","tenant-gain","tenant-onboarding","tenant-onboarding","gain-scripts","gain-scripts"];
+  const branches=["main","main","main","hotfix/fix-1","hotfix/fix-2","feature/auth","feature/ui"];
+  const results=["succeeded","succeeded","succeeded","failed","cancelled"];
+  const reasons=["","","","Test failures","Build errors","Infra timeout","Auth expired",""];
+  const builds=[];
+  let id=5000;
+  const now=Date.now();
+  for(let i=0;i<300;i++){
+    const pi=Math.floor(Math.random()*pipes.length);
+    const branch=branches[Math.floor(Math.random()*branches.length)];
+    const result=results[Math.floor(Math.random()*results.length)];
+    const daysAgo=Math.random()*90;
+    const dur=Math.round(4+Math.random()*20);
+    builds.push({
+      id:id++,buildNumber:`${id}`,
+      definition:{name:pipes[pi]},
+      repository:{name:repos[pi]},
+      sourceBranch:`refs/heads/${branch}`,
+      result,status:"completed",
+      finishTime:new Date(now-daysAgo*86400000).toISOString(),
+      requestedFor:{displayName:["CI Trigger","Rahul S.","Priya M.","Amit K.","Scheduled"][Math.floor(Math.random()*5)]},
+      reason:result==="failed"?reasons[Math.floor(Math.random()*reasons.length)]||"Unknown":"",
+      durationMin:dur,
+    });
+  }
+  return{
+    pipelines:pipes.map((n,i)=>({id:i+1,name:n})),
+    builds:builds.sort((a,b)=>new Date(b.finishTime)-new Date(a.finishTime)),
   };
 }
 
-function generateDemoBuilds() {
-  const pipes = ["core-build-ci","release-deploy-prod","infra-terraform-apply","data-etl-pipeline","ui-test-suite"];
-  const branches = ["main","main","main","hotfix/fix-1","hotfix/fix-2","feature/auth","feature/ui"];
-  const results = ["succeeded","succeeded","succeeded","failed","cancelled"];
-  const reasons = ["","","","Test failures","Build errors","","Infra timeout","Auth expired"];
-  const builds = [];
-  let id = 5000;
-  const now = Date.now();
-  for (let i = 0; i < 200; i++) {
-    const pipe = pipes[Math.floor(Math.random() * pipes.length)];
-    const branch = branches[Math.floor(Math.random() * branches.length)];
-    const result = results[Math.floor(Math.random() * results.length)];
-    const daysAgo = Math.random() * 90;
-    const finishTime = new Date(now - daysAgo * 86400000).toISOString();
-    const dur = Math.round(4 + Math.random() * 20);
-    builds.push({
-      id: id++,
-      buildNumber: `${id}`,
-      definition: { name: pipe },
-      sourceBranch: `refs/heads/${branch}`,
-      result,
-      status: "completed",
-      finishTime,
-      queueTime: new Date(now - daysAgo * 86400000 - dur * 60000).toISOString(),
-      requestedFor: { displayName: ["CI Trigger","Rahul S.","Priya M.","Amit K.","Scheduled"][Math.floor(Math.random() * 5)] },
-      reason: result === "failed" ? reasons[Math.floor(Math.random() * reasons.length)] || "Unknown" : "",
-      durationMin: dur,
-    });
-  }
-  return builds.sort((a, b) => new Date(b.finishTime) - new Date(a.finishTime));
+// ═══════════════════════════════════════════════
+//  DATA HELPERS
+// ═══════════════════════════════════════════════
+function parseBranch(ref){return(ref||"").replace("refs/heads/","");}
+function branchType(b){if(b==="main"||b==="master")return"main";if(b.startsWith("hotfix/"))return"hotfix";return"feature";}
+function branchClass(b){const t=branchType(b);return t==="main"?"main":t==="hotfix"?"hotfix":"feat";}
+function rateColor(r){return r>=90?"#639922":r>=75?"#BA7517":"#E24B4A";}
+function healthLabel(r){return r>=90?"Healthy":r>=75?"Degraded":"Critical";}
+function healthClass(r){return r>=90?"bs":r>=75?"bw":"bd";}
+function healthIcon(r){return r>=90?"ti-circle-check":r>=75?"ti-alert-triangle":"ti-circle-x";}
+function resultClass(r){if(r==="succeeded")return"bs";if(r==="failed")return"bd";return"bw";}
+function resultLabel(r){if(r==="succeeded")return"success";if(r==="failed")return"failed";return"cancelled";}
+function destroyCharts(arr){arr.forEach(c=>{try{c.destroy();}catch(e){}});arr.length=0;}
+
+function calcStats(builds){
+  const total=builds.length;
+  const succ=builds.filter(b=>b.result==="succeeded").length;
+  const fail=builds.filter(b=>b.result==="failed").length;
+  const cancel=builds.filter(b=>b.result==="cancelled").length;
+  const rate=total?Math.round(succ/total*100):0;
+  const avgDur=total?Math.round(builds.reduce((a,b)=>a+(b.durationMin||0),0)/total):0;
+  return{total,succ,fail,cancel,rate,avgDur};
 }
 
-// ══════════════════════════════════════════════
-//  DATA PROCESSING HELPERS
-// ══════════════════════════════════════════════
-function parseBranch(ref) {
-  return (ref || "").replace("refs/heads/", "");
+function groupByPipeline(builds){
+  return builds.reduce((acc,b)=>{
+    const name=b.definition?.name||"unknown";
+    (acc[name]=acc[name]||[]).push(b);
+    return acc;
+  },{});
 }
 
-function branchType(b) {
-  if (b === "main" || b === "master") return "main";
-  if (b.startsWith("hotfix/")) return "hotfix";
-  return "feature";
-}
-
-function branchClass(b) {
-  const t = branchType(b);
-  return t === "main" ? "main" : t === "hotfix" ? "hotfix" : "feat";
-}
-
-function rateColor(r) {
-  return r >= 90 ? "#639922" : r >= 75 ? "#BA7517" : "#E24B4A";
-}
-
-function healthLabel(r) { return r >= 90 ? "Healthy" : r >= 75 ? "Degraded" : "Critical"; }
-function healthClass(r) { return r >= 90 ? "bs" : r >= 75 ? "bw" : "bd"; }
-function healthIcon(r)  { return r >= 90 ? "ti-circle-check" : r >= 75 ? "ti-alert-triangle" : "ti-circle-x"; }
-
-function resultClass(r) {
-  if (r === "succeeded") return "bs";
-  if (r === "failed")    return "bd";
-  return "bw";
-}
-
-function resultLabel(r) {
-  if (r === "succeeded") return "success";
-  if (r === "failed")    return "failed";
-  return "cancelled";
-}
-
-function filteredBuilds(timeIdx, branch = "all") {
-  const minTime = new Date(Date.now() - TIME_RANGES[timeIdx].hours * 3600000);
-  return adoData.builds.filter(b => {
-    const inTime = new Date(b.finishTime || b.queueTime) >= minTime;
-    if (!inTime) return false;
-    if (branch === "all") return true;
-    const br = parseBranch(b.sourceBranch);
-    if (branch === "main") return branchType(br) === "main";
-    if (branch === "hotfix") return branchType(br) === "hotfix";
+function filteredBuilds(timeIdx,branch="all"){
+  const minTime=new Date(Date.now()-TIME_RANGES[timeIdx].hours*3600000);
+  return adoData.builds.filter(b=>{
+    if(!buildMatchesRepoFilter(b)) return false;
+    const inTime=new Date(b.finishTime||b.queueTime)>=minTime;
+    if(!inTime) return false;
+    if(branch==="all") return true;
+    const br=parseBranch(b.sourceBranch);
+    if(branch==="main") return branchType(br)==="main";
+    if(branch==="hotfix") return branchType(br)==="hotfix";
     return true;
   });
 }
 
-function calcStats(builds) {
-  const total    = builds.length;
-  const succ     = builds.filter(b => b.result === "succeeded").length;
-  const fail     = builds.filter(b => b.result === "failed").length;
-  const cancel   = builds.filter(b => b.result === "cancelled").length;
-  const rate     = total ? Math.round(succ / total * 100) : 0;
-  const avgDur   = total ? Math.round(builds.reduce((a, b) => a + (b.durationMin || 0), 0) / total) : 0;
-  return { total, succ, fail, cancel, rate, avgDur };
+function applyGlobalSearch(builds, searchTerm){
+  if(!searchTerm) return builds;
+  const q = searchTerm.toLowerCase();
+  return builds.filter(b=>{
+    const pipe = (b.definition?.name||"").toLowerCase();
+    const repo = (repoFromBuild(b)||"").toLowerCase();
+    const branch = parseBranch(b.sourceBranch||"").toLowerCase();
+    const by = (b.requestedFor?.displayName||"").toLowerCase();
+    const reason = (b.reason||"").toLowerCase();
+    return pipe.includes(q)||repo.includes(q)||branch.includes(q)||by.includes(q)||reason.includes(q);
+  });
 }
 
-function groupByPipeline(builds) {
-  return builds.reduce((acc, b) => {
-    const name = b.definition?.name || "unknown";
-    (acc[name] = acc[name] || []).push(b);
-    return acc;
-  }, {});
+function makePagination(total, page, pageSize, onPage){
+  if(total <= pageSize) return "";
+  const totalPages = Math.ceil(total/pageSize);
+  const pages = [];
+  pages.push(`<button class="pg-btn" onclick="(${onPage})(1)" ${page===1?"disabled":""}>«</button>`);
+  pages.push(`<button class="pg-btn" onclick="(${onPage})(${Math.max(1,page-1)})" ${page===1?"disabled":""}>‹</button>`);
+  // show window of pages
+  const start = Math.max(1, page-2);
+  const end   = Math.min(totalPages, page+2);
+  for(let i=start;i<=end;i++){
+    pages.push(`<button class="pg-btn ${i===page?"active":""}" onclick="(${onPage})(${i})">${i}</button>`);
+  }
+  pages.push(`<button class="pg-btn" onclick="(${onPage})(${Math.min(totalPages,page+1)})" ${page===totalPages?"disabled":""}>›</button>`);
+  pages.push(`<button class="pg-btn" onclick="(${onPage})(${totalPages})" ${page===totalPages?"disabled":""}>»</button>`);
+  pages.push(`<span class="pg-info">Page ${page} of ${totalPages} · ${total} records</span>`);
+  return pages.join("");
 }
 
-function destroyCharts(arr) {
-  arr.forEach(c => { try { c.destroy(); } catch(e) {} });
-  arr.length = 0;
-}
-
-// ══════════════════════════════════════════════
-//  COMMAND CENTER RENDER
-// ══════════════════════════════════════════════
-function setCCPeriod(i, btn) {
-  ccPeriodIdx = i;
-  document.querySelectorAll("#page-cc .pbtn").forEach((el, idx) => el.classList.toggle("active", idx === i));
+// ═══════════════════════════════════════════════
+//  COMMAND CENTER
+// ═══════════════════════════════════════════════
+function setCCPeriod(i,btn){
+  ccPeriodIdx=i;
+  document.querySelectorAll("#page-cc .pbtn").forEach((el,idx)=>el.classList.toggle("active",idx===i));
   renderCC();
 }
-
-function setCCTrendTab(i) {
-  ccTrendTab = i;
-  [0,1,2].forEach(j => document.getElementById(`tt${j}`).classList.toggle("active", j === i));
+function setCCTrendTab(i){
+  ccTrendTab=i;
+  [0,1,2].forEach(j=>document.getElementById(`tt${j}`).classList.toggle("active",j===i));
   renderCCTrendChart();
 }
 
-function renderCC() {
+function renderCC(){
   destroyCharts(ccCharts);
-  // Map period index to time index
-  const periodToTime = [3, 5, 7]; // 7d, 30d, 90d
-  const timeIdx = periodToTime[ccPeriodIdx];
-  const builds  = filteredBuilds(timeIdx);
-  const s       = calcStats(builds);
-  const byPipe  = groupByPipeline(builds);
+  const periodToTime=[3,5,7];
+  const timeIdx=periodToTime[ccPeriodIdx];
+  const gsearch=(document.getElementById("cc-global-search")||{}).value||"";
+  let builds=filteredBuilds(timeIdx);
+  builds=applyGlobalSearch(builds,gsearch);
+  const s=calcStats(builds);
+  const byPipe=groupByPipeline(builds);
 
-  // Hero stats
-  document.getElementById("cc-rate").textContent  = s.rate + "%";
-  document.getElementById("cc-runs").textContent  = s.total.toLocaleString();
-  document.getElementById("cc-pipes").textContent = Object.keys(byPipe).length;
-  document.getElementById("cc-mttr").textContent  = s.avgDur + " min";
-  document.getElementById("cc-trend").textContent = s.rate >= 80 ? "↑ Improving" : "→ Stable";
+  document.getElementById("cc-rate").textContent=s.rate+"%";
+  document.getElementById("cc-runs").textContent=s.total.toLocaleString();
+  document.getElementById("cc-pipes").textContent=Object.keys(byPipe).length;
+  document.getElementById("cc-mttr").textContent=s.avgDur+" min";
+  document.getElementById("cc-trend").textContent=s.rate>=80?"↑ Improving":"→ Stable";
 
-  // Confidence score
-  const conf = Math.min(99, Math.round(s.rate * 0.7 + (s.rate >= 90 ? 25 : s.rate >= 75 ? 15 : 5)));
-  document.getElementById("cc-conf-score").textContent = conf;
-  const confLabel = conf >= 85 ? "Excellent · On track" : conf >= 75 ? "Good · Improving" : "Stable · Watch list";
-  const confColor = conf >= 85 ? "var(--success)" : conf >= 75 ? "#BA7517" : "var(--warn)";
-  document.getElementById("cc-conf-label").textContent  = confLabel;
-  document.getElementById("cc-conf-label").style.color  = confColor;
-  document.getElementById("cc-conf-meaning").textContent =
-    conf >= 85 ? "Pipelines are performing at a high level. Deployment velocity is increasing and failure rate is under control. No critical blockers." :
-    conf >= 75 ? "Pipelines are stable and trending upward. Some failure clusters remain on feature branches. Team is actively investigating." :
-    "Pipelines are running within expected parameters but failure clusters need attention. Review top failure causes in War Room.";
+  const conf=Math.min(99,Math.round(s.rate*0.7+(s.rate>=90?25:s.rate>=75?15:5)));
+  document.getElementById("cc-conf-score").textContent=conf;
+  const confColor=conf>=85?"var(--success)":conf>=75?"#BA7517":"var(--warn)";
+  document.getElementById("cc-conf-label").textContent=conf>=85?"Excellent · On track":conf>=75?"Good · Improving":"Stable · Watch list";
+  document.getElementById("cc-conf-label").style.color=confColor;
+  document.getElementById("cc-conf-meaning").textContent=conf>=85?"Pipelines are performing at a high level. Deployment velocity is increasing and failure rate is under control.":conf>=75?"Pipelines are stable and trending upward. Some failure clusters remain. Team is actively investigating.":"Failure clusters need attention. Review top failure causes in War Room.";
 
-  // Confidence bars
-  const bars = [
-    { lbl: "Success rate",    val: s.rate,                         color: rateColor(s.rate) },
-    { lbl: "Pipeline uptime", val: Math.min(99.9, 95 + s.rate/50), color: "#639922" },
-    { lbl: "MTTR vs target",  val: Math.min(100, Math.round(100 - (s.avgDur / 30) * 50)), color: "#185FA5" },
-    { lbl: "Deploy velocity", val: Math.min(100, 60 + ccPeriodIdx * 10), color: "#639922" },
+  const bars=[
+    {lbl:"Success rate",val:s.rate,color:rateColor(s.rate)},
+    {lbl:"Pipeline uptime",val:Math.min(99,95+s.rate/50).toFixed(0),color:"#639922"},
+    {lbl:"MTTR vs target",val:Math.min(100,Math.round(100-(s.avgDur/30)*50)),color:"#185FA5"},
+    {lbl:"Deploy velocity",val:Math.min(100,60+ccPeriodIdx*10),color:"#639922"},
   ];
-  document.getElementById("cc-conf-bars").innerHTML = bars.map(b => `
+  document.getElementById("cc-conf-bars").innerHTML=bars.map(b=>`
     <div class="conf-bar-row">
       <span class="conf-bar-lbl">${b.lbl}</span>
-      <div class="conf-bar-wrap"><div class="conf-bar-fill" style="width:${b.val.toFixed(0)}%;background:${b.color};"></div></div>
-      <span class="conf-bar-val" style="color:${b.color};">${b.val.toFixed(0)}%</span>
+      <div class="conf-bar-wrap"><div class="conf-bar-fill" style="width:${b.val}%;background:${b.color};"></div></div>
+      <span class="conf-bar-val" style="color:${b.color};">${b.val}%</span>
     </div>`).join("");
 
-  // Cost section
-  const cpm      = 0.05;
-  const wasted   = Math.round(s.fail * 1.4 * s.avgDur * cpm);
-  const agentH   = Math.round(s.fail * 1.4 * s.avgDur / 60);
-  const engDays  = Math.round(agentH / 8);
-  const reruns   = Math.round(s.fail * 1.4);
-  const saved    = Math.round(wasted * 0.58);
-  document.getElementById("cc-cost-sub").textContent = `${TIME_RANGES[periodToTime[ccPeriodIdx]].label} · Agent compute waste from failed runs`;
-  document.getElementById("cc-cost-kpis").innerHTML = `
+  const cpm=0.05;
+  const wasted=Math.round(s.fail*1.4*s.avgDur*cpm);
+  const agentH=Math.round(s.fail*1.4*s.avgDur/60);
+  const engDays=Math.round(agentH/8);
+  const reruns=Math.round(s.fail*1.4);
+  const saved=Math.round(wasted*0.58);
+  document.getElementById("cc-cost-sub").textContent=`${TIME_RANGES[periodToTime[ccPeriodIdx]].label} · Agent compute waste`;
+  document.getElementById("cc-cost-kpis").innerHTML=`
     <div class="ck"><p class="ck-val" style="color:var(--danger);">$${wasted.toLocaleString()}</p><p class="ck-lbl">Cost of failed runs</p></div>
     <div class="ck"><p class="ck-val" style="color:var(--warn);">${agentH}h</p><p class="ck-lbl">Agent hours wasted</p></div>
     <div class="ck"><p class="ck-val" style="color:var(--warn);">${reruns.toLocaleString()}</p><p class="ck-lbl">Re-run executions</p></div>
     <div class="ck"><p class="ck-val" style="color:var(--danger);">${engDays}d</p><p class="ck-lbl">Engineer time lost</p></div>
     <div class="ck"><p class="ck-val" style="color:var(--success);">$${saved.toLocaleString()}</p><p class="ck-lbl">Potential savings</p></div>`;
-  document.getElementById("cc-cost-flow").innerHTML = `
+  document.getElementById("cc-cost-flow").innerHTML=`
     <div class="flow-step"><p class="flow-val" style="color:var(--danger);">${s.fail.toLocaleString()}</p><p class="flow-lbl">Failures</p></div>
     <div class="flow-arr"><i class="ti ti-arrow-right"></i></div>
     <div class="flow-step"><p class="flow-val" style="color:var(--warn);">${reruns.toLocaleString()}</p><p class="flow-lbl">Re-runs</p></div>
@@ -889,27 +980,29 @@ function renderCC() {
     <div class="flow-arr"><i class="ti ti-arrow-right"></i></div>
     <div class="flow-step"><p class="flow-val" style="color:var(--danger);">$${wasted.toLocaleString()}</p><p class="flow-lbl">Total wasted</p></div>`;
 
-  // Sim sliders defaults
-  document.getElementById("s1").value = Math.round((s.fail / Math.max(1, s.total)) * 100);
-  document.getElementById("s4").value = Math.min(3000, s.total);
-  document.getElementById("s5").value = s.avgDur;
+  document.getElementById("s1").value=Math.round((s.fail/Math.max(1,s.total))*100);
+  document.getElementById("s4").value=Math.min(3000,s.total);
+  document.getElementById("s5").value=s.avgDur;
   calcSim();
 
-  // KPIs
-  document.getElementById("cc-kpis").innerHTML = [
-    { icon: "ti-circle-check", val: s.rate + "%",           lbl: "Success rate",    cls: s.rate>=80?"g":"a" },
-    { icon: "ti-player-play",  val: s.total.toLocaleString(), lbl: "Total runs",    cls: "b" },
-    { icon: "ti-circle-x",     val: s.fail.toLocaleString(), lbl: "Failed runs",    cls: "r" },
-    { icon: "ti-clock",        val: s.avgDur + " min",       lbl: "Avg duration",   cls: "a" },
-    { icon: "ti-trending-up",  val: s.rate >= 80 ? "↑" : "→", lbl: "Trend",         cls: "g" },
-    { icon: "ti-server",       val: Object.keys(byPipe).length, lbl: "Pipelines",   cls: "b" },
-  ].map(k => `<div class="kpi"><div class="kpi-icon" style="font-size:18px;margin-bottom:6px;"><i class="ti ${k.icon}" style="color:var(--text2);"></i></div><p class="kpi-val ${k.cls}">${k.val}</p><p class="kpi-lbl">${k.lbl}</p></div>`).join("");
+  document.getElementById("cc-kpis").innerHTML=[
+    {icon:"ti-circle-check",val:s.rate+"%",lbl:"Success rate",cls:s.rate>=80?"g":"a"},
+    {icon:"ti-player-play",val:s.total.toLocaleString(),lbl:"Total runs",cls:"b"},
+    {icon:"ti-circle-x",val:s.fail.toLocaleString(),lbl:"Failed runs",cls:"r"},
+    {icon:"ti-clock",val:s.avgDur+" min",lbl:"Avg duration",cls:"a"},
+    {icon:"ti-trending-up",val:s.rate>=80?"↑":"→",lbl:"Trend",cls:"g"},
+    {icon:"ti-server",val:Object.keys(byPipe).length,lbl:"Pipelines",cls:"b"},
+  ].map(k=>`<div class="kpi" style="background:var(--bg);border:0.5px solid var(--border);border-radius:10px;padding:.9rem 1rem;"><div style="font-size:18px;margin-bottom:6px;"><i class="ti ${k.icon}" style="color:var(--text2);"></i></div><p class="kpi-val ${k.cls}" style="font-size:22px;font-weight:500;margin-bottom:2px;">${k.val}</p><p class="kpi-lbl">${k.lbl}</p></div>`).join("");
 
-  // Pipeline health cards
-  document.getElementById("cc-pipe-health").innerHTML = Object.entries(byPipe).map(([name, pBuilds]) => {
-    const ps = calcStats(pBuilds);
+  document.getElementById("cc-pipe-health").innerHTML=Object.entries(byPipe).map(([name,pBuilds])=>{
+    const ps=calcStats(pBuilds);
+    const repo=repoFromBuild(pBuilds[0]||{});
+    const rc=repoClass(repo);
     return `<div class="phc">
-      <p class="phc-name" title="${name}">${name}</p>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <p class="phc-name" title="${name}" style="margin:0;">${name}</p>
+        ${repo?`<span class="repo-chip ${rc}">${repo.length>12?repo.slice(0,12)+"…":repo}</span>`:""}
+      </div>
       <p class="phc-score" style="color:${rateColor(ps.rate)};">${ps.rate}%</p>
       <div class="phc-bar-wrap"><div class="phc-bar-fill" style="width:${ps.rate}%;background:${rateColor(ps.rate)};"></div></div>
       <div class="phc-meta"><span>${ps.total} runs</span><span>${ps.avgDur}m avg</span></div>
@@ -917,219 +1010,161 @@ function renderCC() {
     </div>`;
   }).join("");
 
-  // Team health
-  document.getElementById("cc-team-health").innerHTML = `<p class="ct">All pipelines</p>` +
-    Object.entries(byPipe).map(([name, pBuilds]) => {
-      const ps = calcStats(pBuilds);
+  document.getElementById("cc-team-health").innerHTML=`<p class="ct">All pipelines</p>`+
+    Object.entries(byPipe).map(([name,pBuilds])=>{
+      const ps=calcStats(pBuilds);
+      const repo=repoFromBuild(pBuilds[0]||{});
+      const rc=repoClass(repo);
       return `<div class="team-row">
-        <span class="team-name">${name}</span>
+        <span class="team-name" title="${name}">${name}</span>
+        ${repo?`<span class="repo-chip ${rc}" style="flex-shrink:0;">${repo.length>14?repo.slice(0,14)+"…":repo}</span>`:""}
         <div class="team-bar-wrap"><div class="team-bar-fill" style="width:${ps.rate}%;background:${rateColor(ps.rate)};"></div></div>
         <span class="team-rate" style="color:${rateColor(ps.rate)};">${ps.rate}%</span>
         <span class="team-badge ${healthClass(ps.rate)}"><i class="ti ${healthIcon(ps.rate)}" style="font-size:10px;"></i>${healthLabel(ps.rate)}</span>
       </div>`;
     }).join("");
 
-  // Insights
-  document.getElementById("cc-insights").innerHTML = [
-    { icon: "ti-trophy",       val: s.rate + "%",            lbl: "Overall success rate. Target 92% by Q3.",          cls: "g" },
-    { icon: "ti-clock",        val: s.avgDur + " min",       lbl: "Average run duration across all pipelines.",       cls: "b" },
-    { icon: "ti-currency-dollar", val: "$"+wasted.toLocaleString(), lbl: "Compute cost wasted on failed runs.",       cls: "r" },
-    { icon: "ti-trending-up",  val: "↑",                     lbl: "Pipeline health is improving this period.",        cls: "g" },
-  ].map(k => `<div class="ic"><div class="ic-icon" style="font-size:18px;margin-bottom:6px;"><i class="ti ${k.icon}" style="color:${k.cls==='g'?'var(--success)':k.cls==='b'?'var(--info)':'var(--danger)'};"></i></div><p class="ic-val ${k.cls}">${k.val}</p><p class="ic-lbl">${k.lbl}</p></div>`).join("");
+  document.getElementById("cc-insights").innerHTML=[
+    {icon:"ti-trophy",val:s.rate+"%",lbl:"Overall success rate. Target 92% by Q3.",cls:"g"},
+    {icon:"ti-clock",val:s.avgDur+" min",lbl:"Average run duration across filtered pipelines.",cls:"b"},
+    {icon:"ti-currency-dollar",val:"$"+wasted.toLocaleString(),lbl:"Compute cost wasted on failed runs.",cls:"r"},
+    {icon:"ti-trending-up",val:"↑",lbl:"Pipeline health is improving this period.",cls:"g"},
+  ].map(k=>`<div class="ic"><div style="font-size:18px;margin-bottom:8px;"><i class="ti ${k.icon}" style="color:${k.cls==="g"?"var(--success)":k.cls==="b"?"var(--info)":"var(--danger)"};"></i></div><p class="ic-val ${k.cls}">${k.val}</p><p class="ic-lbl">${k.lbl}</p></div>`).join("");
 
-  // Donut
-  const dc = new Chart(document.getElementById("ccDonut").getContext("2d"), {
-    type: "doughnut",
-    data: { labels: ["Success","Failed","Cancelled"], datasets: [{ data: [s.succ, s.fail, s.cancel], backgroundColor: ["#97C459","#E24B4A","#EF9F27"], borderWidth: 0 }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: "68%", plugins: { legend: { display: false } } },
-  });
+  const dc=new Chart(document.getElementById("ccDonut").getContext("2d"),{type:"doughnut",data:{labels:["Success","Failed","Cancelled"],datasets:[{data:[s.succ,s.fail,s.cancel],backgroundColor:["#97C459","#E24B4A","#EF9F27"],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{display:false}}}});
   ccCharts.push(dc);
 
-  // Cause chart — count failure reasons from real data
-  const causeMap = {};
-  builds.filter(b => b.result === "failed").forEach(b => {
-    const r = b.reason || "Unknown";
-    causeMap[r] = (causeMap[r] || 0) + 1;
-  });
-  const causes = Object.entries(causeMap).sort((a,b) => b[1]-a[1]).slice(0, 6);
-  const cc2 = new Chart(document.getElementById("ccCause").getContext("2d"), {
-    type: "bar",
-    data: { labels: causes.map(c=>c[0]), datasets: [{ data: causes.map(c=>c[1]), backgroundColor: ["#E24B4A","#D85A30","#BA7517","#854F0B","#7F77DD","#888780"], borderRadius: 3 }] },
-    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: "rgba(128,128,128,0.08)" }, ticks: { font: { size: 9 } } }, y: { grid: { display: false }, ticks: { font: { size: 9 } } } } },
-  });
+  const causeMap={};
+  builds.filter(b=>b.result==="failed").forEach(b=>{const r=b.reason||"Unknown";causeMap[r]=(causeMap[r]||0)+1;});
+  const causes=Object.entries(causeMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const cc2=new Chart(document.getElementById("ccCause").getContext("2d"),{type:"bar",data:{labels:causes.map(c=>c[0]),datasets:[{data:causes.map(c=>c[1]),backgroundColor:["#E24B4A","#D85A30","#BA7517","#854F0B","#7F77DD","#888780"],borderRadius:3}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"rgba(128,128,128,0.08)"},ticks:{font:{size:9}}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
   ccCharts.push(cc2);
 
   renderCCTrendChart();
 }
 
-function renderCCTrendChart() {
-  if (ccCharts[0] && ccCharts[0].canvas && ccCharts[0].canvas.id === "ccTrendChart") {
-    ccCharts[0].destroy(); ccCharts.shift();
-  }
-  const periodToTime = [3, 5, 7];
-  const timeIdx = periodToTime[ccPeriodIdx];
-  const builds  = filteredBuilds(timeIdx);
-
-  // Group by day/week
-  const buckets = {};
-  const h = TIME_RANGES[timeIdx].hours;
-  const bucketHours = h <= 168 ? 24 : h <= 720 ? 168 : 720;
-  builds.forEach(b => {
-    const t = new Date(b.finishTime || b.queueTime);
-    const bucket = Math.floor(t.getTime() / (bucketHours * 3600000));
-    buckets[bucket] = buckets[bucket] || { s: 0, f: 0, c: 0, t };
-    if (b.result === "succeeded") buckets[bucket].s++;
-    else if (b.result === "failed") buckets[bucket].f++;
+function renderCCTrendChart(){
+  if(ccCharts[0]&&ccCharts[0].canvas?.id==="ccTrendChart"){ccCharts[0].destroy();ccCharts.shift();}
+  const periodToTime=[3,5,7];
+  const gsearch=(document.getElementById("cc-global-search")||{}).value||"";
+  let builds=filteredBuilds(periodToTime[ccPeriodIdx]);
+  builds=applyGlobalSearch(builds,gsearch);
+  const h=TIME_RANGES[periodToTime[ccPeriodIdx]].hours;
+  const bucketH=h<=168?24:h<=720?168:720;
+  const buckets={};
+  builds.forEach(b=>{
+    const t=new Date(b.finishTime||b.queueTime);
+    const bucket=Math.floor(t.getTime()/(bucketH*3600000));
+    buckets[bucket]=buckets[bucket]||{s:0,f:0,c:0,t};
+    if(b.result==="succeeded") buckets[bucket].s++;
+    else if(b.result==="failed") buckets[bucket].f++;
     else buckets[bucket].c++;
   });
-  const sorted = Object.values(buckets).sort((a,b) => a.t - b.t);
-  const labels = sorted.map(b => b.t.toLocaleDateString("en-GB", { month: "short", day: "numeric" }));
-
-  let data, color, label;
-  if (ccTrendTab === 0) {
-    data = sorted.map(b => b.s + b.f + b.c > 0 ? Math.round(b.s / (b.s + b.f + b.c) * 100) : 0);
-    color = "#97C459"; label = "Success rate %";
-  } else if (ccTrendTab === 1) {
-    data = sorted.map(b => b.s + b.f + b.c);
-    color = "#378ADD"; label = "Total runs";
-  } else {
-    data = sorted.map(b => b.f > 0 ? Math.round(b.f / (b.s + b.f + b.c) * 100) : 0);
-    color = "#EF9F27"; label = "Failure rate %";
-  }
-
-  document.getElementById("cc-trend-leg").innerHTML = `<span><span class="ld" style="background:${color};"></span>${label}</span>`;
-  const tc = new Chart(document.getElementById("ccTrendChart").getContext("2d"), {
-    type: "line",
-    data: { labels, datasets: [{ label, data, borderColor: color, backgroundColor: color + "22", borderWidth: 2, tension: 0.4, pointBackgroundColor: color, pointRadius: 3, fill: true }] },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { font: { size: 9 }, maxRotation: 35, autoSkip: true } }, y: { grid: { color: "rgba(128,128,128,0.08)" }, ticks: { font: { size: 10 } } } } },
-  });
+  const sorted=Object.values(buckets).sort((a,b)=>a.t-b.t);
+  const labels=sorted.map(b=>b.t.toLocaleDateString("en-GB",{month:"short",day:"numeric"}));
+  let data,color,label;
+  if(ccTrendTab===0){data=sorted.map(b=>b.s+b.f+b.c>0?Math.round(b.s/(b.s+b.f+b.c)*100):0);color="#97C459";label="Success rate %";}
+  else if(ccTrendTab===1){data=sorted.map(b=>b.s+b.f+b.c);color="#378ADD";label="Total runs";}
+  else{data=sorted.map(b=>b.s+b.f+b.c>0?Math.round(b.f/(b.s+b.f+b.c)*100):0);color="#EF9F27";label="Failure rate %";}
+  document.getElementById("cc-trend-leg").innerHTML=`<span><span class="ld" style="background:${color};"></span>${label}</span>`;
+  const tc=new Chart(document.getElementById("ccTrendChart").getContext("2d"),{type:"line",data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:color+"22",borderWidth:2,tension:.4,pointBackgroundColor:color,pointRadius:3,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:35,autoSkip:true}},y:{grid:{color:"rgba(128,128,128,0.08)"},ticks:{font:{size:10}}}}}});
   ccCharts.unshift(tc);
 }
 
-// ══════════════════════════════════════════════
-//  SAVINGS SIMULATOR
-// ══════════════════════════════════════════════
-function calcSim() {
-  const el = id => document.getElementById(id);
-  if (!el("s1")) return;
-  const fr  = parseInt(el("s1").value);
-  const tr  = parseInt(el("s2").value);
-  const cpm = parseInt(el("s3").value) * 0.01;
-  const runs= parseInt(el("s4").value);
-  const dur = parseInt(el("s5").value);
-  el("o1").textContent = fr + "%";
-  el("o2").textContent = tr + "%";
-  el("o3").textContent = "$" + cpm.toFixed(2);
-  el("o4").textContent = runs.toLocaleString();
-  el("o5").textContent = dur + " min";
-  const cf    = Math.round(runs * fr / 100);
-  const tf    = Math.round(runs * tr / 100);
-  const saved = Math.max(0, Math.round((cf - tf) * 1.4 * dur * cpm));
-  const savedH= Math.max(0, Math.round((cf - tf) * 1.4 * dur / 60));
-  const savedR= Math.max(0, cf - tf);
-  el("simRes").innerHTML = `
+function calcSim(){
+  const el=id=>document.getElementById(id);
+  if(!el("s1"))return;
+  const fr=parseInt(el("s1").value),tr=parseInt(el("s2").value),cpm=parseInt(el("s3").value)*0.01,runs=parseInt(el("s4").value),dur=parseInt(el("s5").value);
+  el("o1").textContent=fr+"%";el("o2").textContent=tr+"%";el("o3").textContent="$"+cpm.toFixed(2);el("o4").textContent=runs.toLocaleString();el("o5").textContent=dur+" min";
+  const cf=Math.round(runs*fr/100),tf=Math.round(runs*tr/100);
+  const saved=Math.max(0,Math.round((cf-tf)*1.4*dur*cpm));
+  const savedH=Math.max(0,Math.round((cf-tf)*1.4*dur/60));
+  const savedR=Math.max(0,cf-tf);
+  el("simRes").innerHTML=`
     <div class="sr"><p class="sr-val">$${saved.toLocaleString()}</p><p class="sr-lbl">Monthly cost saved</p></div>
     <div class="sr"><p class="sr-val">${savedH}h</p><p class="sr-lbl">Agent hours recovered</p></div>
     <div class="sr"><p class="sr-val">${savedR}</p><p class="sr-lbl">Fewer wasted runs</p></div>`;
 }
 
-// ══════════════════════════════════════════════
-//  WAR ROOM RENDER
-// ══════════════════════════════════════════════
-function setWRTime(i) {
-  wrTimeIdx = i;
-  document.querySelectorAll(".tp").forEach((el, idx) => el.classList.toggle("active", idx === i));
-  document.getElementById("wr-time-val").textContent = TIME_RANGES[i].label;
-  // Reload from ADO for new time range
-  loadData().then(renderWR);
+// ═══════════════════════════════════════════════
+//  WAR ROOM
+// ═══════════════════════════════════════════════
+function setWRTime(i){
+  wrTimeIdx=i;
+  document.querySelectorAll(".tp").forEach((el,idx)=>el.classList.toggle("active",idx===i));
+  document.getElementById("wr-time-val").textContent=TIME_RANGES[i].label;
+  wrPipePage=1;wrRunPage=1;
+  loadData().then(()=>{buildRepoList();renderRepoPills("wr");renderWR();});
 }
 
-function setWRBranch(b) {
-  wrBranch = b;
-  ["br-all","br-main","br-hotfix"].forEach(id => document.getElementById(id).classList.remove("active"));
-  document.getElementById("br-" + b).classList.add("active");
-  wrExpanded = {};
+function setWRBranch(b){
+  wrBranch=b;
+  ["br-all","br-main","br-hotfix"].forEach(id=>document.getElementById(id).classList.remove("active"));
+  document.getElementById("br-"+b).classList.add("active");
+  wrExpanded={};wrPipePage=1;wrRunPage=1;
   renderWR();
 }
 
-function renderWR() {
+function renderWR(){
   destroyCharts(wrCharts);
-  const builds = filteredBuilds(wrTimeIdx, wrBranch);
-  const s      = calcStats(builds);
-  const byPipe = groupByPipeline(builds);
+  const gsearch=(document.getElementById("wr-global-search")||{}).value||"";
+  let builds=filteredBuilds(wrTimeIdx,wrBranch);
+  builds=applyGlobalSearch(builds,gsearch);
+  const s=calcStats(builds);
+  const byPipe=groupByPipeline(builds);
 
   // KPIs
-  document.getElementById("wr-kpis").innerHTML = [
-    { val: s.total,           lbl: "Total runs",      cls: "b", sub: TIME_RANGES[wrTimeIdx].label },
-    { val: s.succ,            lbl: "Successful",       cls: "g", sub: "Completed clean" },
-    { val: s.fail,            lbl: "Failed",           cls: "r", sub: "Needs attention" },
-    { val: s.cancel,          lbl: "Cancelled",        cls: "a", sub: "" },
-    { val: s.rate + "%",      lbl: "Success rate",     cls: s.rate>=80?"g":s.rate>=65?"a":"r", sub: "" },
-    { val: Math.round(s.fail*1.4), lbl: "Re-runs",    cls: "a", sub: "~1.4x per fail" },
-  ].map(k => `<div class="mc"><p class="mc-val" style="color:var(--${k.cls==='g'?'success':k.cls==='r'?'danger':k.cls==='a'?'warn':'info'})">${k.val.toLocaleString()}</p><p class="mc-lbl">${k.lbl}</p>${k.sub?`<p style="font-size:10px;color:var(--text3);">${k.sub}</p>`:""}</div>`).join("");
+  document.getElementById("wr-kpis").innerHTML=[
+    {val:s.total,lbl:"Total runs",cls:"b",sub:TIME_RANGES[wrTimeIdx].label},
+    {val:s.succ,lbl:"Successful",cls:"g",sub:"Completed clean"},
+    {val:s.fail,lbl:"Failed",cls:"r",sub:"Needs attention"},
+    {val:s.cancel,lbl:"Cancelled",cls:"a",sub:""},
+    {val:s.rate+"%",lbl:"Success rate",cls:s.rate>=80?"g":s.rate>=65?"a":"r",sub:""},
+    {val:Math.round(s.fail*1.4),lbl:"Re-runs",cls:"a",sub:"~1.4x per fail"},
+  ].map(k=>`<div class="mc"><p class="mc-val" style="color:var(--${k.cls==="g"?"success":k.cls==="r"?"danger":k.cls==="a"?"warn":"info"})">${typeof k.val==="number"?k.val.toLocaleString():k.val}</p><p class="mc-lbl">${k.lbl}</p>${k.sub?`<p style="font-size:10px;color:var(--text3);">${k.sub}</p>`:""}</div>`).join("");
 
   // Insight
-  const sorted = Object.entries(byPipe).sort((a,b) => calcStats(a[1]).rate - calcStats(b[1]).rate);
-  const worst  = sorted[0];
-  const worstRate = worst ? calcStats(worst[1]).rate : 0;
-  const adHoc  = builds.filter(b => b.reason && b.reason.includes("Manual")).length;
-  document.getElementById("wr-insight-txt").textContent =
-    worst ? `${worst[0]} is the weakest pipeline at ${worstRate}% success rate. ${s.fail} total failures detected in ${TIME_RANGES[wrTimeIdx].label.toLowerCase()}. Top failure cause from real ADO data shown in chart. Hotfix branches have higher ad-hoc trigger rates — consider adding required validation gates.` :
-    "No builds found for this time range and branch filter.";
+  const sorted=Object.entries(byPipe).sort((a,b)=>calcStats(a[1]).rate-calcStats(b[1]).rate);
+  const worst=sorted[0];
+  const worstRate=worst?calcStats(worst[1]).rate:0;
+  document.getElementById("wr-insight-txt").textContent=worst?
+    `${worst[0]} is the weakest pipeline at ${worstRate}% success rate. ${s.fail} total failures in ${TIME_RANGES[wrTimeIdx].label.toLowerCase()}. ${selectedRepos.has("all")?"Showing all repos.":"Filtered to: "+[...selectedRepos].join(", ")+"."} Use repo filter or search to drill down further.`:
+    "No builds found for current filters.";
 
-  // Trend chart — bucket by time
-  const buckets = {};
-  const h = TIME_RANGES[wrTimeIdx].hours;
-  const bucketH = h <= 24 ? 2 : h <= 72 ? 8 : h <= 168 ? 24 : h <= 336 ? 48 : 168;
-  builds.forEach(b => {
-    const t = new Date(b.finishTime || b.queueTime);
-    const bucket = Math.floor(t.getTime() / (bucketH * 3600000));
-    buckets[bucket] = buckets[bucket] || { s: 0, f: 0, c: 0, t };
-    if (b.result === "succeeded") buckets[bucket].s++;
-    else if (b.result === "failed") buckets[bucket].f++;
+  // Trend chart
+  const h=TIME_RANGES[wrTimeIdx].hours;
+  const bucketH=h<=24?2:h<=72?8:h<=168?24:h<=336?48:168;
+  const buckets={};
+  builds.forEach(b=>{
+    const t=new Date(b.finishTime||b.queueTime);
+    const bucket=Math.floor(t.getTime()/(bucketH*3600000));
+    buckets[bucket]=buckets[bucket]||{s:0,f:0,c:0,t};
+    if(b.result==="succeeded") buckets[bucket].s++;
+    else if(b.result==="failed") buckets[bucket].f++;
     else buckets[bucket].c++;
   });
-  const bkts = Object.values(buckets).sort((a,b) => a.t - b.t);
-  const tLabels = bkts.map(b => b.t.toLocaleDateString("en-GB", { month: "short", day: "numeric" }));
-
-  const tc = new Chart(document.getElementById("wrTrend").getContext("2d"), {
-    type: "bar",
-    data: { labels: tLabels, datasets: [
-      { label: "Success",   data: bkts.map(b=>b.s), backgroundColor: "#97C459", stack: "r" },
-      { label: "Failed",    data: bkts.map(b=>b.f), backgroundColor: "#E24B4A", stack: "r" },
-      { label: "Cancelled", data: bkts.map(b=>b.c), backgroundColor: "#EF9F27", stack: "r" },
-    ]},
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: "index" } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { size: 9 }, maxRotation: 35, autoSkip: true } }, y: { stacked: true, ticks: { font: { size: 10 } }, grid: { color: "rgba(128,128,128,0.08)" } } } },
-  });
+  const bkts=Object.values(buckets).sort((a,b)=>a.t-b.t);
+  const tLabels=bkts.map(b=>b.t.toLocaleDateString("en-GB",{month:"short",day:"numeric"}));
+  const tc=new Chart(document.getElementById("wrTrend").getContext("2d"),{type:"bar",data:{labels:tLabels,datasets:[{label:"Success",data:bkts.map(b=>b.s),backgroundColor:"#97C459",stack:"r"},{label:"Failed",data:bkts.map(b=>b.f),backgroundColor:"#E24B4A",stack:"r"},{label:"Cancelled",data:bkts.map(b=>b.c),backgroundColor:"#EF9F27",stack:"r"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:"index"}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:9},maxRotation:35,autoSkip:true}},y:{stacked:true,ticks:{font:{size:10}},grid:{color:"rgba(128,128,128,0.08)"}}}}});
   wrCharts.push(tc);
 
-  // Cause chart from real data
-  const causeMap = {};
-  builds.filter(b => b.result === "failed").forEach(b => {
-    const r = b.reason || "Unknown";
-    causeMap[r] = (causeMap[r] || 0) + 1;
-  });
-  const causes = Object.entries(causeMap).sort((a,b) => b[1]-a[1]).slice(0,6);
-  const cc = new Chart(document.getElementById("wrCause").getContext("2d"), {
-    type: "bar",
-    data: { labels: causes.map(c=>c[0]), datasets: [{ data: causes.map(c=>c[1]), backgroundColor: "#E24B4A", borderRadius: 3 }] },
-    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: "rgba(128,128,128,0.08)" }, ticks: { font: { size: 9 } } }, y: { grid: { display: false }, ticks: { font: { size: 9 } } } } },
-  });
+  const causeMap={};
+  builds.filter(b=>b.result==="failed").forEach(b=>{const r=b.reason||"Unknown";causeMap[r]=(causeMap[r]||0)+1;});
+  const causes=Object.entries(causeMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const cc=new Chart(document.getElementById("wrCause").getContext("2d"),{type:"bar",data:{labels:causes.map(c=>c[0]),datasets:[{data:causes.map(c=>c[1]),backgroundColor:"#E24B4A",borderRadius:3}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"rgba(128,128,128,0.08)"},ticks:{font:{size:9}}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
   wrCharts.push(cc);
 
-  // Branch split panel (only when all branches selected)
-  if (wrBranch === "all") {
-    const mainBuilds   = builds.filter(b => branchType(parseBranch(b.sourceBranch)) === "main");
-    const hotfixBuilds = builds.filter(b => branchType(parseBranch(b.sourceBranch)) === "hotfix");
-    const ms = calcStats(mainBuilds);
-    const hs = calcStats(hotfixBuilds);
-
-    const branchPipeHTML = (blds) => {
-      const bp = groupByPipeline(blds);
-      return Object.entries(bp).map(([name, pb]) => {
-        const ps = calcStats(pb);
+  // Branch split
+  if(wrBranch==="all"){
+    const mainB=builds.filter(b=>branchType(parseBranch(b.sourceBranch))==="main");
+    const hotfixB=builds.filter(b=>branchType(parseBranch(b.sourceBranch))==="hotfix");
+    const ms=calcStats(mainB);const hs=calcStats(hotfixB);
+    const bPipeHTML=blds=>{
+      const bp=groupByPipeline(blds);
+      return Object.entries(bp).map(([name,pb])=>{
+        const ps=calcStats(pb);
         return `<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:11px;">
-          <span>${name}</span>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px;" title="${name}">${name}</span>
           <div style="display:flex;align-items:center;gap:6px;">
             <div class="pb-wrap" style="width:48px;"><div class="pb-fill" style="width:${ps.rate}%;background:${rateColor(ps.rate)};"></div></div>
             <span style="color:${rateColor(ps.rate)};font-weight:500;width:28px;text-align:right;">${ps.rate}%</span>
@@ -1137,97 +1172,149 @@ function renderWR() {
         </div>`;
       }).join("");
     };
-
-    document.getElementById("wr-branch-section").innerHTML = `
+    document.getElementById("wr-branch-section").innerHTML=`
       <div class="branch-split">
         <div class="bc main-bc">
-          <p class="bc-title"><span class="bp main">main</span> branch health</p>
-          <div class="bc-kpis">
-            <div class="bc-k"><p class="bc-kv b">${ms.total}</p><p class="bc-kl">Runs</p></div>
-            <div class="bc-k"><p class="bc-kv g">${ms.succ}</p><p class="bc-kl">Success</p></div>
-            <div class="bc-k"><p class="bc-kv r">${ms.fail}</p><p class="bc-kl">Failed</p></div>
-          </div>
+          <p class="bc-title"><span class="bp main">main</span> branch</p>
+          <div class="bc-kpis"><div class="bc-k"><p class="bc-kv b">${ms.total}</p><p class="bc-kl">Runs</p></div><div class="bc-k"><p class="bc-kv g">${ms.succ}</p><p class="bc-kl">Success</p></div><div class="bc-k"><p class="bc-kv r">${ms.fail}</p><p class="bc-kl">Failed</p></div></div>
           <p class="pb-lbl"><span>Success rate</span><span style="color:${rateColor(ms.rate)};font-weight:500;">${ms.rate}%</span></p>
           <div class="pb-wrap" style="width:100%;"><div class="pb-fill" style="width:${ms.rate}%;background:${rateColor(ms.rate)};"></div></div>
-          <div style="margin-top:10px;">${branchPipeHTML(mainBuilds)}</div>
+          <div style="margin-top:10px;">${bPipeHTML(mainB)}</div>
         </div>
         <div class="bc hotfix-bc">
-          <p class="bc-title"><span class="bp hotfix">hotfix/*</span> branch health</p>
-          <div class="bc-kpis">
-            <div class="bc-k"><p class="bc-kv b">${hs.total}</p><p class="bc-kl">Runs</p></div>
-            <div class="bc-k"><p class="bc-kv g">${hs.succ}</p><p class="bc-kl">Success</p></div>
-            <div class="bc-k"><p class="bc-kv r">${hs.fail}</p><p class="bc-kl">Failed</p></div>
-          </div>
+          <p class="bc-title"><span class="bp hotfix">hotfix/*</span> branch</p>
+          <div class="bc-kpis"><div class="bc-k"><p class="bc-kv b">${hs.total}</p><p class="bc-kl">Runs</p></div><div class="bc-k"><p class="bc-kv g">${hs.succ}</p><p class="bc-kl">Success</p></div><div class="bc-k"><p class="bc-kv r">${hs.fail}</p><p class="bc-kl">Failed</p></div></div>
           <p class="pb-lbl"><span>Success rate</span><span style="color:${rateColor(hs.rate)};font-weight:500;">${hs.rate}%</span></p>
           <div class="pb-wrap" style="width:100%;"><div class="pb-fill" style="width:${hs.rate}%;background:${rateColor(hs.rate)};"></div></div>
-          <div style="margin-top:10px;">${branchPipeHTML(hotfixBuilds)}</div>
+          <div style="margin-top:10px;">${bPipeHTML(hotfixB)}</div>
         </div>
       </div>`;
   } else {
-    document.getElementById("wr-branch-section").innerHTML = "";
+    document.getElementById("wr-branch-section").innerHTML="";
   }
 
-  // Pipeline table
-  let pipeHTML = "";
-  Object.entries(byPipe).forEach(([name, pBuilds]) => {
-    const ps      = calcStats(pBuilds);
-    const branches= [...new Set(pBuilds.map(b => parseBranch(b.sourceBranch)))];
-    const eid     = "e_" + name.replace(/[^a-z0-9]/gi, "_");
-    const isOpen  = !!wrExpanded[eid];
-    const last    = pBuilds[0];
-    pipeHTML += `<tr style="cursor:pointer;" onclick="toggleWRExp('${eid}')">
+  renderWRPipeTable(builds,byPipe);
+  renderWRRunsTable(builds);
+}
+
+function renderWRPipeTable(builds,byPipe){
+  // allow calling standalone from search
+  if(!builds){
+    const gsearch=(document.getElementById("wr-global-search")||{}).value||"";
+    let b=filteredBuilds(wrTimeIdx,wrBranch);
+    b=applyGlobalSearch(b,gsearch);
+    byPipe=groupByPipeline(b);
+    builds=b;
+  }
+  const pipeSearch=(document.getElementById("wr-pipe-search")||{}).value||"";
+  let entries=Object.entries(byPipe);
+  if(pipeSearch){
+    const q=pipeSearch.toLowerCase();
+    entries=entries.filter(([name,pBuilds])=>{
+      const repo=repoFromBuild(pBuilds[0]||{});
+      return name.toLowerCase().includes(q)||repo.toLowerCase().includes(q);
+    });
+  }
+  const total=entries.length;
+  document.getElementById("wr-pipe-meta").textContent=`${total} pipeline${total!==1?"s":""}`;
+
+  const start=(wrPipePage-1)*PAGE_SIZE;
+  const pageEntries=entries.slice(start,start+PAGE_SIZE);
+
+  let html="";
+  pageEntries.forEach(([name,pBuilds])=>{
+    const ps=calcStats(pBuilds);
+    const branches=[...new Set(pBuilds.map(b=>parseBranch(b.sourceBranch)))];
+    const repo=repoFromBuild(pBuilds[0]||{});
+    const rc=repoClass(repo);
+    const eid="e_"+name.replace(/[^a-z0-9]/gi,"_");
+    const isOpen=!!wrExpanded[eid];
+    const last=pBuilds[0];
+    html+=`<tr style="cursor:pointer;" onclick="toggleWRExp('${eid}')">
       <td><button class="exp-btn"><i class="ti ti-chevron-${isOpen?"down":"right"}" style="font-size:12px;"></i></button></td>
       <td style="font-weight:500;">${name}</td>
-      <td>${branches.slice(0,2).map(b=>`<span class="bp ${branchClass(b)}">${b.length>16?b.slice(0,16)+"…":b}</span>`).join(" ")}${branches.length>2?`<span style="font-size:10px;color:var(--text2);"> +${branches.length-2}</span>`:""}</td>
+      <td>${repo?`<span class="repo-chip ${rc}">${repo.length>16?repo.slice(0,16)+"…":repo}</span>`:""}</td>
+      <td>${branches.slice(0,2).map(b=>`<span class="bp ${branchClass(b)}">${b.length>14?b.slice(0,14)+"…":b}</span>`).join(" ")}${branches.length>2?`<span style="font-size:10px;color:var(--text2);"> +${branches.length-2}</span>`:""}</td>
       <td>${ps.total}</td>
       <td><div style="display:flex;align-items:center;gap:6px;"><div class="pb-wrap" style="width:56px;"><div class="pb-fill" style="width:${ps.rate}%;background:${rateColor(ps.rate)};"></div></div><span style="font-size:11px;font-weight:500;color:${rateColor(ps.rate)};">${ps.rate}%</span></div></td>
       <td style="color:var(--danger);">${ps.fail}</td>
       <td style="color:var(--text2);">${ps.avgDur}m</td>
       <td><span class="badge ${resultClass(last?.result)}">${resultLabel(last?.result)}</span></td>
     </tr>`;
-    if (isOpen) {
-      const byBranch = pBuilds.reduce((acc, b) => {
-        const br = parseBranch(b.sourceBranch);
-        (acc[br] = acc[br] || []).push(b);
-        return acc;
-      }, {});
-      Object.entries(byBranch).forEach(([br, bBlds]) => {
-        const bs = calcStats(bBlds);
-        pipeHTML += `<tr class="exp-inner">
+    if(isOpen){
+      const byBranch=pBuilds.reduce((acc,b)=>{const br=parseBranch(b.sourceBranch);(acc[br]=acc[br]||[]).push(b);return acc;},{});
+      Object.entries(byBranch).forEach(([br,bBlds])=>{
+        const bs=calcStats(bBlds);
+        html+=`<tr class="exp-inner">
+          <td></td><td><i class="ti ti-corner-down-right" style="font-size:10px;color:var(--text2);margin-right:4px;"></i></td>
           <td></td>
-          <td><i class="ti ti-corner-down-right" style="font-size:10px;color:var(--text2);margin-right:4px;"></i></td>
-          <td><span class="bp ${branchClass(br)}">${br}</span></td>
+          <td><span class="bp ${branchClass(br)}">${br.length>16?br.slice(0,16)+"…":br}</span></td>
           <td>${bs.total}</td>
           <td><div style="display:flex;align-items:center;gap:6px;"><div class="pb-wrap" style="width:56px;"><div class="pb-fill" style="width:${bs.rate}%;background:${rateColor(bs.rate)};"></div></div><span style="font-size:11px;color:${rateColor(bs.rate)};font-weight:500;">${bs.rate}%</span></div></td>
-          <td style="color:var(--danger);">${bs.fail}</td>
-          <td>—</td>
+          <td style="color:var(--danger);">${bs.fail}</td><td>—</td>
           <td><span class="badge ${resultClass(bBlds[0]?.result)}">${resultLabel(bBlds[0]?.result)}</span></td>
         </tr>`;
       });
     }
   });
-  document.getElementById("wr-pipe-tbody").innerHTML = pipeHTML;
+  document.getElementById("wr-pipe-tbody").innerHTML=html;
+  document.getElementById("wr-pipe-pg").innerHTML=makePagination(total,wrPipePage,PAGE_SIZE,"p=>{ window.wrPipePage=p; renderWRPipeTable(); }");
+}
 
-  // Recent runs
-  document.getElementById("wr-recent-tbody").innerHTML = builds.slice(0, 15).map(b => {
-    const br  = parseBranch(b.sourceBranch);
-    const dur = b.durationMin ? b.durationMin + "m" : "—";
+function renderWRRunsTable(builds){
+  if(!builds){
+    const gsearch=(document.getElementById("wr-global-search")||{}).value||"";
+    let b=filteredBuilds(wrTimeIdx,wrBranch);
+    builds=applyGlobalSearch(b,gsearch);
+  }
+  const runSearch=(document.getElementById("wr-run-search")||{}).value||"";
+  let runs=[...builds];
+  if(runSearch){
+    const q=runSearch.toLowerCase();
+    runs=runs.filter(b=>{
+      const pipe=(b.definition?.name||"").toLowerCase();
+      const repo=(repoFromBuild(b)||"").toLowerCase();
+      const branch=parseBranch(b.sourceBranch||"").toLowerCase();
+      const by=(b.requestedFor?.displayName||"").toLowerCase();
+      const reason=(b.reason||"").toLowerCase();
+      const result=resultLabel(b.result||"").toLowerCase();
+      return pipe.includes(q)||repo.includes(q)||branch.includes(q)||by.includes(q)||reason.includes(q)||result.includes(q);
+    });
+  }
+  const total=runs.length;
+  document.getElementById("wr-run-meta").textContent=`${total.toLocaleString()} run${total!==1?"s":""}`;
+
+  const start=(wrRunPage-1)*PAGE_SIZE;
+  const pageRuns=runs.slice(start,start+PAGE_SIZE);
+  const repo_=b=>repoFromBuild(b);
+
+  document.getElementById("wr-recent-tbody").innerHTML=pageRuns.map(b=>{
+    const br=parseBranch(b.sourceBranch);
+    const repo=repo_(b);
+    const rc=repoClass(repo);
+    const dur=b.durationMin?b.durationMin+"m":"—";
     return `<tr>
       <td style="font-family:monospace;font-size:11px;font-weight:500;">#${b.id}</td>
-      <td style="font-size:11px;">${b.definition?.name || "—"}</td>
-      <td><span class="bp ${branchClass(br)}">${br.length>18?br.slice(0,18)+"…":br}</span></td>
-      <td style="color:var(--text2);font-size:11px;">${b.requestedFor?.displayName || "—"}</td>
+      <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${b.definition?.name||""}">${b.definition?.name||"—"}</td>
+      <td>${repo?`<span class="repo-chip ${rc}">${repo.length>14?repo.slice(0,14)+"…":repo}</span>`:""}</td>
+      <td><span class="bp ${branchClass(br)}">${br.length>16?br.slice(0,16)+"…":br}</span></td>
+      <td style="color:var(--text2);font-size:11px;">${b.requestedFor?.displayName||"—"}</td>
       <td style="color:var(--text2);font-size:11px;">${dur}</td>
       <td><span class="badge ${resultClass(b.result)}">${resultLabel(b.result)}</span></td>
-      <td style="color:${b.reason?'var(--danger)':'var(--text2)'};font-size:11px;">${b.reason || "—"}</td>
+      <td style="color:${b.reason?"var(--danger)":"var(--text2)"};font-size:11px;">${b.reason||"—"}</td>
     </tr>`;
   }).join("");
+
+  document.getElementById("wr-run-pg").innerHTML=makePagination(total,wrRunPage,PAGE_SIZE,"p=>{ window.wrRunPage=p; renderWRRunsTable(); }");
 }
 
-function toggleWRExp(eid) {
-  wrExpanded[eid] = !wrExpanded[eid];
-  renderWR();
-}
+function toggleWRExp(eid){wrExpanded[eid]=!wrExpanded[eid];renderWRPipeTable();}
+
+// expose page setters to pagination onclick handlers
+window.wrPipePage=1;
+window.wrRunPage=1;
+Object.defineProperty(window,"wrPipePage",{get:()=>wrPipePage,set:v=>{wrPipePage=v;}});
+Object.defineProperty(window,"wrRunPage",{get:()=>wrRunPage,set:v=>{wrRunPage=v;}});
 </script>
 </body>
 </html>
