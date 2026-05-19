@@ -641,17 +641,33 @@ const PAGE_SIZE = 50;
 
 // 25002500 Pipeline filter 2014 only show these pipeline IDs 25002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
 // Add more IDs here once you get them from ADO
-// Pipeline IDs from ADO — confirmed from live data
-// These are the 20 pipelines currently running in SimCorpCloud / Project Unicorn
-// Filtered to tenant-gain folder pipelines only
-// Full list from console: 2362,3481,1373,6974,2658,1346,8623,1412,573,2300,2657,4184,1554,2586,6089,3167,1253,5249,2924,748
-// Add your confirmed tenant-gain IDs below — currently showing all 20 until names are confirmed
-const ALLOWED_PIPELINE_IDS = new Set([
-  2362, 3481, 1373, 6974, 2658, 1346, 8623, 1412, 573,
-  2300, 2657, 4184, 1554, 2586, 6089, 3167, 1253, 5249, 2924, 748,
-  "2362","3481","1373","6974","2658","1346","8623","1412","573",
-  "2300","2657","4184","1554","2586","6089","3167","1253","5249","2924","748"
+// Pipeline name filter — show only pipelines matching these exact names
+// From your ADO tenant-gain folder — add/remove names as needed
+const ALLOWED_PIPELINE_NAMES = new Set([
+  "Fetch_UserDetails-GAIN",
+  "tenant-datamanagement-wiki-daily-sync",
+  "Tenant-gain-API",
+  "tenant-gain-copy-release",
+  "tenant-gain-delete-stale-AD-groups",
+  "tenant-gain-deployment-prereq",
+  "tenant-gain-deployment",
+  "tenant-gain-documentation",
+  "tenant-gain-environment-creation",
+  "tenant-gain-git-version",
+  "tenant-gain-import",
+  "tenant-gain-kobold-deployment",
+  "tenant-gain-onboarding",
+  "tenant-gain-orchestrator",
+  "tenant-gain-pr",
+  "tenant-gain-replication",
+  "tenant-gain-teardown-prereq",
+  "tenant-gain-teardown",
+  "tenant-gain-messagepump-deployment",
+  "tenant-gain-Network-Topology",
 ]);
+
+// Keep this empty — using name filter instead
+const ALLOWED_PIPELINE_IDS = new Set();
 
 // 25002500 Links 250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
 const WIKI_URL = "https://dev.azure.com/SimCorpCloud/DevOps-IE/_wiki/wikis/DevOps-IE.wiki/131148/%F0%9F%93%96-Wiki-Guide";
@@ -711,8 +727,11 @@ function goWR(){
 //  REPO HELPERS
 // ═══════════════════════════════════════════════
 function repoFromBuild(b){
-  // ADO build objects may carry repository info in different places
-  return b.repository?.name || b.triggerInfo?.["ci.sourceBranch"]?.split("/")?.[0] || "";
+  // ADO returns repo name in repository.name field
+  return b.repository?.name
+      || b.triggerInfo?.["ci.sourceBranch"]?.split("/")?.[0]
+      || b.project?.name
+      || "";
 }
 
 function repoClass(name){
@@ -770,8 +789,12 @@ function toggleRepo(repo, view){
 
 function buildMatchesRepoFilter(b){
   if(selectedRepos.has("all")) return true;
-  const repo = repoFromBuild(b);
-  return [...selectedRepos].some(r => repo.includes(r) || r.includes(repo));
+  const repo = (repoFromBuild(b)||"").toLowerCase().trim();
+  if(!repo) return true; // if no repo info, don't filter it out
+  return [...selectedRepos].some(r => {
+    const rLower = r.toLowerCase().trim();
+    return repo === rLower || repo.includes(rLower) || rLower.includes(repo);
+  });
 }
 
 // ═══════════════════════════════════════════════
@@ -800,16 +823,18 @@ async function loadData(){
     const summary=await fetchADO("summary");
     adoData.pipelines=summary.pipelines||[];
     adoData.builds=summary.builds||[];
-    // Debug — log pipeline ID to name mapping
+    // Debug — log repo names and pipeline names from real data
     if(adoData.builds.length > 0){
+      const repoSet = new Set(adoData.builds.map(b=>b.repository?.name||"unknown"));
       const pipeMap = {};
-      adoData.builds.forEach(b => {
-        const id = b.definition?.id;
-        const name = b.definition?.name;
-        if(id) pipeMap[id] = name;
+      adoData.builds.forEach(b=>{
+        const repo = b.repository?.name || "unknown";
+        const name = b.definition?.name || "unknown";
+        pipeMap[name] = repo;
       });
-      console.log("Total builds received:", adoData.builds.length);
-      console.log("Pipeline ID → Name (copy this to confirm your pipelines):", JSON.stringify(pipeMap, null, 2));
+      console.log("Total builds:", adoData.builds.length);
+      console.log("Unique repos:", [...repoSet]);
+      console.log("Pipeline → Repo mapping:", JSON.stringify(pipeMap, null, 2));
     }
     // Update SVG pipeline names
     adoData.pipelines.slice(0,5).forEach((p,i)=>{
@@ -894,11 +919,10 @@ function filteredBuilds(timeIdx,branch="all"){
   const minTime=new Date(Date.now()-TIME_RANGES[timeIdx].hours*3600000);
   return adoData.builds.filter(b=>{
     // Filter to allowed pipeline IDs only
-    // Filter to allowed pipeline IDs only
-    if(ALLOWED_PIPELINE_IDS.size > 0) {
-      const bid = b.definition?.id ?? b.definition?.definitionId;
-      if(!bid) return false;
-      if(!ALLOWED_PIPELINE_IDS.has(Number(bid)) && !ALLOWED_PIPELINE_IDS.has(String(bid))) return false;
+    // Filter by pipeline name — only show tenant-gain pipelines
+    if(ALLOWED_PIPELINE_NAMES.size > 0) {
+      const pname = b.definition?.name || "";
+      if(!ALLOWED_PIPELINE_NAMES.has(pname)) return false;
     }
     if(!buildMatchesRepoFilter(b)) return false;
     const inTime=new Date(b.finishTime||b.queueTime)>=minTime;
