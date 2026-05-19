@@ -641,8 +641,10 @@ const PAGE_SIZE = 50;
 
 // 25002500 Pipeline filter 2014 only show these pipeline IDs 25002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
 // Add more IDs here once you get them from ADO
+// Pipeline IDs — stored as both number and string to handle ADO API variations
 const ALLOWED_PIPELINE_IDS = new Set([
-  7126, 6046, 1057, 6487, 2961, 6919, 2910, 8485
+  7126, 6046, 1057, 6487, 2961, 6919, 2910, 8485,
+  "7126", "6046", "1057", "6487", "2961", "6919", "2910", "8485"
 ]);
 
 // 25002500 Links 250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
@@ -792,6 +794,12 @@ async function loadData(){
     const summary=await fetchADO("summary");
     adoData.pipelines=summary.pipelines||[];
     adoData.builds=summary.builds||[];
+    // Debug — log first 3 builds to console so we can see the data structure
+    if(adoData.builds.length > 0){
+      console.log("Sample build object:", JSON.stringify(adoData.builds[0], null, 2));
+      console.log("Total builds received:", adoData.builds.length);
+      console.log("Unique pipeline IDs in data:", [...new Set(adoData.builds.map(b=>b.definition?.id))].slice(0,20));
+    }
     // Update SVG pipeline names
     adoData.pipelines.slice(0,5).forEach((p,i)=>{
       const el=document.getElementById(`svgP${i+1}`);
@@ -875,7 +883,12 @@ function filteredBuilds(timeIdx,branch="all"){
   const minTime=new Date(Date.now()-TIME_RANGES[timeIdx].hours*3600000);
   return adoData.builds.filter(b=>{
     // Filter to allowed pipeline IDs only
-    if(ALLOWED_PIPELINE_IDS.size > 0 && !ALLOWED_PIPELINE_IDS.has(b.definition?.id)) return false;
+    // Filter to allowed pipeline IDs — handle both number and string from ADO API
+    if(ALLOWED_PIPELINE_IDS.size > 0) {
+      const bid = b.definition?.id ?? b.definition?.definitionId;
+      if(!bid) return false;
+      if(!ALLOWED_PIPELINE_IDS.has(Number(bid)) && !ALLOWED_PIPELINE_IDS.has(String(bid))) return false;
+    }
     if(!buildMatchesRepoFilter(b)) return false;
     const inTime=new Date(b.finishTime||b.queueTime)>=minTime;
     if(!inTime) return false;
