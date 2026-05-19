@@ -641,12 +641,16 @@ const PAGE_SIZE = 50;
 
 // 25002500 Pipeline filter 2014 only show these pipeline IDs 25002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
 // Add more IDs here once you get them from ADO
-// Pipeline IDs — stored as both number and string to handle ADO API variations
-// Currently showing: tenant-gain-deployment (1057)
-// Add more IDs here as confirmed
+// Pipeline IDs from ADO — confirmed from live data
+// These are the 20 pipelines currently running in SimCorpCloud / Project Unicorn
+// Filtered to tenant-gain folder pipelines only
+// Full list from console: 2362,3481,1373,6974,2658,1346,8623,1412,573,2300,2657,4184,1554,2586,6089,3167,1253,5249,2924,748
+// Add your confirmed tenant-gain IDs below — currently showing all 20 until names are confirmed
 const ALLOWED_PIPELINE_IDS = new Set([
-  1057,
-  "1057"
+  2362, 3481, 1373, 6974, 2658, 1346, 8623, 1412, 573,
+  2300, 2657, 4184, 1554, 2586, 6089, 3167, 1253, 5249, 2924, 748,
+  "2362","3481","1373","6974","2658","1346","8623","1412","573",
+  "2300","2657","4184","1554","2586","6089","3167","1253","5249","2924","748"
 ]);
 
 // 25002500 Links 250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
@@ -796,11 +800,16 @@ async function loadData(){
     const summary=await fetchADO("summary");
     adoData.pipelines=summary.pipelines||[];
     adoData.builds=summary.builds||[];
-    // Debug — log first 3 builds to console so we can see the data structure
+    // Debug — log pipeline ID to name mapping
     if(adoData.builds.length > 0){
-      console.log("Sample build object:", JSON.stringify(adoData.builds[0], null, 2));
+      const pipeMap = {};
+      adoData.builds.forEach(b => {
+        const id = b.definition?.id;
+        const name = b.definition?.name;
+        if(id) pipeMap[id] = name;
+      });
       console.log("Total builds received:", adoData.builds.length);
-      console.log("Unique pipeline IDs in data:", [...new Set(adoData.builds.map(b=>b.definition?.id))].slice(0,20));
+      console.log("Pipeline ID → Name (copy this to confirm your pipelines):", JSON.stringify(pipeMap, null, 2));
     }
     // Update SVG pipeline names
     adoData.pipelines.slice(0,5).forEach((p,i)=>{
