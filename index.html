@@ -606,7 +606,7 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
       </div>
       <table class="tbl"><thead><tr>
         <th style="width:20px;"></th>
-        <th>Pipeline</th><th>Repo</th><th>Branches</th><th>Runs</th><th>Success rate</th><th>Failed</th><th>Avg duration</th><th>Last result</th>
+        <th>Pipeline</th><th>Links</th><th>Repo</th><th>Branches</th><th>Runs</th><th>Success rate</th><th>Failed</th><th>Avg duration</th><th>Last result</th>
       </tr></thead><tbody id="wr-pipe-tbody"></tbody></table>
       <div class="pagination" id="wr-pipe-pg"></div>
     </div>
@@ -623,7 +623,7 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
         </div>
       </div>
       <table class="tbl"><thead><tr>
-        <th>Run ID</th><th>Pipeline</th><th>Repo</th><th>Branch</th><th>Triggered by</th><th>Duration</th><th>Result</th><th>Failure reason</th>
+        <th>Run ID</th><th>Pipeline</th><th>Links</th><th>Repo</th><th>Branch</th><th>Triggered by</th><th>Duration</th><th>Result</th><th>Failure reason</th>
       </tr></thead><tbody id="wr-recent-tbody"></tbody></table>
       <div class="pagination" id="wr-run-pg"></div>
     </div>
@@ -633,11 +633,21 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
 <script>
 // ═══════════════════════════════════════════════
 //  CONFIG
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 const FUNCTION_URL = "https://dmcore-pipeline-proxy-test-bfgcevedfpaeg5ha.westeurope-01.azurewebsites.net/api/PipelineDashboard";
 const ORG     = "SimCorpCloud";
 const PROJECT = "Project Unicorn";
 const PAGE_SIZE = 50;
+
+// 25002500 Pipeline filter 2014 only show these pipeline IDs 25002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
+// Add more IDs here once you get them from ADO
+const ALLOWED_PIPELINE_IDS = new Set([
+  7126, 6046, 1057, 6487, 2961, 6919, 2910, 8485
+]);
+
+// 25002500 Links 250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
+const WIKI_URL = "https://dev.azure.com/SimCorpCloud/DevOps-IE/_wiki/wikis/DevOps-IE.wiki/131148/%F0%9F%93%96-Wiki-Guide";
+const PIPELINE_BASE = "https://dev.azure.com/SimCorpCloud/Project%20Unicorn/_build?definitionId=";
 
 // Target repos — highlighted in filter
 const TARGET_REPOS = ["tenant-gain","tenant-onboarding","gain-scripts"];
@@ -864,6 +874,8 @@ function groupByPipeline(builds){
 function filteredBuilds(timeIdx,branch="all"){
   const minTime=new Date(Date.now()-TIME_RANGES[timeIdx].hours*3600000);
   return adoData.builds.filter(b=>{
+    // Filter to allowed pipeline IDs only
+    if(ALLOWED_PIPELINE_IDS.size > 0 && !ALLOWED_PIPELINE_IDS.has(b.definition?.id)) return false;
     if(!buildMatchesRepoFilter(b)) return false;
     const inTime=new Date(b.finishTime||b.queueTime)>=minTime;
     if(!inTime) return false;
@@ -1230,9 +1242,15 @@ function renderWRPipeTable(builds,byPipe){
     const eid="e_"+name.replace(/[^a-z0-9]/gi,"_");
     const isOpen=!!wrExpanded[eid];
     const last=pBuilds[0];
+    const pipeId = pBuilds[0]?.definition?.id || "";
+    const pipeLink = pipeId ? `${PIPELINE_BASE}${pipeId}` : "";
     html+=`<tr style="cursor:pointer;" onclick="toggleWRExp('${eid}')">
       <td><button class="exp-btn"><i class="ti ti-chevron-${isOpen?"down":"right"}" style="font-size:12px;"></i></button></td>
       <td style="font-weight:500;">${name}</td>
+      <td style="white-space:nowrap;">
+        ${pipeLink?`<a href="${pipeLink}" target="_blank" onclick="event.stopPropagation()" title="Open pipeline in Azure DevOps" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--info);text-decoration:none;background:var(--info-bg);padding:2px 7px;border-radius:20px;"><i class="ti ti-external-link" style="font-size:11px;"></i>Pipeline</a>`:""}
+        <a href="${WIKI_URL}" target="_blank" onclick="event.stopPropagation()" title="Open Wiki guide" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--success);text-decoration:none;background:var(--success-bg);padding:2px 7px;border-radius:20px;margin-left:4px;"><i class="ti ti-book" style="font-size:11px;"></i>Wiki</a>
+      </td>
       <td>${repo?`<span class="repo-chip ${rc}">${repo.length>16?repo.slice(0,16)+"…":repo}</span>`:""}</td>
       <td>${branches.slice(0,2).map(b=>`<span class="bp ${branchClass(b)}">${b.length>14?b.slice(0,14)+"…":b}</span>`).join(" ")}${branches.length>2?`<span style="font-size:10px;color:var(--text2);"> +${branches.length-2}</span>`:""}</td>
       <td>${ps.total}</td>
@@ -1293,9 +1311,15 @@ function renderWRRunsTable(builds){
     const repo=repo_(b);
     const rc=repoClass(repo);
     const dur=b.durationMin?b.durationMin+"m":"—";
+    const runPipeId = b.definition?.id || "";
+    const runPipeLink = runPipeId ? `${PIPELINE_BASE}${runPipeId}` : "";
     return `<tr>
       <td style="font-family:monospace;font-size:11px;font-weight:500;">#${b.id}</td>
       <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${b.definition?.name||""}">${b.definition?.name||"—"}</td>
+      <td style="white-space:nowrap;">
+        ${runPipeLink?`<a href="${runPipeLink}" target="_blank" title="Open in Azure DevOps" style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--info);text-decoration:none;background:var(--info-bg);padding:2px 6px;border-radius:20px;"><i class="ti ti-external-link" style="font-size:10px;"></i>Pipeline</a>`:""}
+        <a href="${WIKI_URL}" target="_blank" title="Open Wiki guide" style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--success);text-decoration:none;background:var(--success-bg);padding:2px 6px;border-radius:20px;margin-left:3px;"><i class="ti ti-book" style="font-size:10px;"></i>Wiki</a>
+      </td>
       <td>${repo?`<span class="repo-chip ${rc}">${repo.length>14?repo.slice(0,14)+"…":repo}</span>`:""}</td>
       <td><span class="bp ${branchClass(br)}">${br.length>16?br.slice(0,16)+"…":br}</span></td>
       <td style="color:var(--text2);font-size:11px;">${b.requestedFor?.displayName||"—"}</td>
