@@ -1032,6 +1032,23 @@ function renderActiveFailures(builds){
   </div>`;
 }
 
+function buildTimelineHTML(tl, buildId){
+  if(tl.loading) return `<div style="color:var(--text2);font-size:11px;padding:4px 0;"><i class="ti ti-loader" style="animation:spin .8s linear infinite;font-size:12px;vertical-align:-2px;margin-right:6px;"></i>Loading stage details...</div>`;
+  if(tl.error) return `<div style="color:var(--danger);font-size:11px;">Could not load timeline: ${tl.error}</div>`;
+  if(!tl.records?.length) return `<div style="color:var(--text2);font-size:11px;">No failed stage records found.</div>`;
+  return tl.records.map(r=>{
+    const issues=(r.issues||[]).filter(i=>i.type==="error").map(i=>`<div style="margin-top:3px;padding-left:8px;border-left:2px solid var(--danger);color:var(--danger);font-size:11px;line-height:1.5;">${i.message}</div>`).join("");
+    return `<div class="tl-stage">
+      <span class="badge bd" style="flex-shrink:0;align-self:flex-start;">${r.type||"Stage"}</span>
+      <div style="flex:1;">
+        <span class="tl-stage-name">${r.name||"—"}</span>
+        <span style="color:var(--danger);font-size:11px;margin-left:8px;">${r.errorCount?r.errorCount+" error(s)":""}</span>
+        ${issues}
+      </div>
+    </div>`;
+  }).join("");
+}
+
 async function fetchRunTimeline(buildId){
   wrRunTimeline[buildId]={loading:true};
   renderWRRunsTable();
@@ -1400,8 +1417,8 @@ function renderWRPipeTable(builds,byPipe){
         ${pipeLink?`<a href="${pipeLink}" target="_blank" onclick="event.stopPropagation()" title="Open pipeline in Azure DevOps" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--info);text-decoration:none;background:var(--info-bg);padding:2px 7px;border-radius:20px;"><i class="ti ti-external-link" style="font-size:11px;"></i>Pipeline</a>`:""}
         <a href="${WIKI_URL}" target="_blank" onclick="event.stopPropagation()" title="Open Wiki guide" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--success);text-decoration:none;background:var(--success-bg);padding:2px 7px;border-radius:20px;margin-left:4px;"><i class="ti ti-book" style="font-size:11px;"></i>Wiki</a>
       </td>
-      <td>${repo?`<span class="repo-chip ${rc}">${repo.length>16?repo.slice(0,16)+"…":repo}</span>`:""}</td>
-      <td>${branches.slice(0,2).map(b=>`<span class="bp ${branchClass(b)}">${b.length>14?b.slice(0,14)+"…":b}</span>`).join(" ")}${branches.length>2?`<span style="font-size:10px;color:var(--text2);"> +${branches.length-2}</span>`:""}</td>
+      <td>${repo?`<span class="repo-chip ${rc}">${repo}</span>`:""}</td>
+      <td style="max-width:200px;"><div style="display:flex;flex-wrap:wrap;gap:4px;">${branches.map(b=>`<span class="bp ${branchClass(b)}">${b}</span>`).join("")}</div></td>
       <td>${ps.total}</td>
       <td><div style="display:flex;align-items:center;gap:6px;"><div class="pb-wrap" style="width:56px;"><div class="pb-fill" style="width:${ps.rate}%;background:${rateColor(ps.rate)};"></div></div><span style="font-size:11px;font-weight:500;color:${rateColor(ps.rate)};">${ps.rate}%</span></div></td>
       <td style="color:var(--danger);">${ps.fail}</td>
@@ -1412,14 +1429,25 @@ function renderWRPipeTable(builds,byPipe){
       const byBranch=pBuilds.reduce((acc,b)=>{const br=parseBranch(b.sourceBranch);(acc[br]=acc[br]||[]).push(b);return acc;},{});
       Object.entries(byBranch).forEach(([br,bBlds])=>{
         const bs=calcStats(bBlds);
+        const lastRun=bBlds[0];
+        const isBranchFailed=lastRun?.result==="failed";
+        const failReason=isBranchFailed&&lastRun?.reason?lastRun.reason:"";
+        const brTl=isBranchFailed?wrRunTimeline[lastRun.id]:null;
+        const stageBtn=isBranchFailed?`<button class="tl-expand-btn" style="margin-left:4px;" onclick="event.stopPropagation();${brTl?`delete wrRunTimeline[${lastRun.id}];renderWRPipeTable()`:`fetchRunTimeline(${lastRun.id})`}">${brTl?"▲ Hide stages":"▼ Stage details"}</button>`:"";
         html+=`<tr class="exp-inner">
-          <td></td><td><i class="ti ti-corner-down-right" style="font-size:10px;color:var(--text2);margin-right:4px;"></i></td>
           <td></td>
-          <td><span class="bp ${branchClass(br)}">${br.length>16?br.slice(0,16)+"…":br}</span></td>
+          <td><i class="ti ti-corner-down-right" style="font-size:10px;color:var(--text2);margin-right:4px;"></i></td>
+          <td colspan="2"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
+            <span class="bp ${branchClass(br)}">${br}</span>
+            ${failReason?`<span class="fail-reason" title="${failReason}">${failReason}</span>`:""}
+            ${stageBtn}
+          </div>
+          ${brTl?`<div style="margin-top:6px;">${buildTimelineHTML(brTl,lastRun.id)}</div>`:""}
+          </td>
           <td>${bs.total}</td>
           <td><div style="display:flex;align-items:center;gap:6px;"><div class="pb-wrap" style="width:56px;"><div class="pb-fill" style="width:${bs.rate}%;background:${rateColor(bs.rate)};"></div></div><span style="font-size:11px;color:${rateColor(bs.rate)};font-weight:500;">${bs.rate}%</span></div></td>
           <td style="color:var(--danger);">${bs.fail}</td><td>—</td>
-          <td><span class="badge ${resultClass(bBlds[0]?.result)}">${resultLabel(bBlds[0]?.result)}</span></td>
+          <td><span class="badge ${resultClass(lastRun?.result)}">${resultLabel(lastRun?.result)}</span></td>
         </tr>`;
       });
     }
@@ -1474,32 +1502,15 @@ function renderWRRunsTable(builds){
         ${runPipeLink?`<a href="${runPipeLink}" target="_blank" title="Open in Azure DevOps" style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--info);text-decoration:none;background:var(--info-bg);padding:2px 6px;border-radius:20px;"><i class="ti ti-external-link" style="font-size:10px;"></i>Pipeline</a>`:""}
         <a href="${WIKI_URL}" target="_blank" title="Open Wiki guide" style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--success);text-decoration:none;background:var(--success-bg);padding:2px 6px;border-radius:20px;margin-left:3px;"><i class="ti ti-book" style="font-size:10px;"></i>Wiki</a>
       </td>
-      <td>${repo?`<span class="repo-chip ${rc}">${repo.length>14?repo.slice(0,14)+"…":repo}</span>`:""}</td>
-      <td><span class="bp ${branchClass(br)}">${br.length>16?br.slice(0,16)+"…":br}</span></td>
+      <td>${repo?`<span class="repo-chip ${rc}">${repo}</span>`:""}</td>
+      <td><span class="bp ${branchClass(br)}">${br}</span></td>
       <td style="color:var(--text2);font-size:11px;">${b.requestedFor?.displayName||"—"}</td>
       <td style="color:var(--text2);font-size:11px;">${dur}</td>
       <td><span class="badge ${resultClass(b.result)}">${resultLabel(b.result)}</span></td>
       <td style="color:${b.reason?"var(--danger)":"var(--text2)"};font-size:11px;">${b.reason||"—"}</td>
     </tr>`);
     if(isFailed&&tl){
-      let tlContent;
-      if(tl.loading){
-        tlContent=`<div style="color:var(--text2);padding:6px 0;"><i class="ti ti-loader" style="animation:spin .8s linear infinite;font-size:12px;vertical-align:-2px;margin-right:6px;"></i>Loading stage details...</div>`;
-      }else if(tl.error){
-        tlContent=`<div style="color:var(--danger);">Could not load timeline: ${tl.error}</div>`;
-      }else if(!tl.records?.length){
-        tlContent=`<div style="color:var(--text2);">No failed stage records found in timeline.</div>`;
-      }else{
-        tlContent=tl.records.map(r=>{
-          const issues=(r.issues||[]).filter(i=>i.type==="error").map(i=>`<div style="margin-top:2px;">↳ ${i.message}</div>`).join("");
-          return `<div class="tl-stage">
-            <span class="badge bd" style="flex-shrink:0;">${r.type||"Stage"}</span>
-            <span class="tl-stage-name">${r.name||"—"}</span>
-            <span class="tl-stage-err">${r.errorCount?r.errorCount+" error(s)":"Failed"}${issues}</span>
-          </div>`;
-        }).join("");
-      }
-      rows.push(`<tr class="tl-row"><td colspan="10"><div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:6px;"><i class="ti ti-git-branch" style="font-size:11px;vertical-align:-1px;margin-right:4px;"></i>Stage details for run #${b.id}</div>${tlContent}</td></tr>`);
+      rows.push(`<tr class="tl-row"><td colspan="10"><div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:6px;"><i class="ti ti-git-branch" style="font-size:11px;vertical-align:-1px;margin-right:4px;"></i>Stage details · Run #${b.id} · ${b.definition?.name||""} · <span class="bp ${branchClass(parseBranch(b.sourceBranch))}">${parseBranch(b.sourceBranch)}</span></div>${buildTimelineHTML(tl,b.id)}</td></tr>`);
     }
   });
   document.getElementById("wr-recent-tbody").innerHTML=rows.join("");
