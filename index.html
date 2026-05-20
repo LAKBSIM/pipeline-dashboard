@@ -1051,7 +1051,7 @@ function buildTimelineHTML(tl, buildId){
 
 async function fetchRunTimeline(buildId){
   wrRunTimeline[buildId]={loading:true};
-  renderWRRunsTable();
+  renderWRPipeTable(); renderWRRunsTable();
   try{
     const data=await fetchADO("timeline",`&buildId=${buildId}`);
     const records=(data.records||data||[]);
@@ -1060,7 +1060,7 @@ async function fetchRunTimeline(buildId){
   }catch(e){
     wrRunTimeline[buildId]={error:e.message};
   }
-  renderWRRunsTable();
+  renderWRPipeTable(); renderWRRunsTable();
 }
 
 function makePagination(total, page, pageSize, onPage){
@@ -1380,6 +1380,7 @@ function renderWRPipeTable(builds,byPipe){
     const gsearch=(document.getElementById("wr-global-search")||{}).value||"";
     let b=filteredBuilds(wrTimeIdx,wrBranch);
     b=applyGlobalSearch(b,gsearch);
+    b=filterByTier(b,wrTierFilter);
     byPipe=groupByPipeline(b);
     builds=b;
   }
@@ -1460,7 +1461,8 @@ function renderWRRunsTable(builds){
   if(!builds){
     const gsearch=(document.getElementById("wr-global-search")||{}).value||"";
     let b=filteredBuilds(wrTimeIdx,wrBranch);
-    builds=applyGlobalSearch(b,gsearch);
+    b=applyGlobalSearch(b,gsearch);
+    builds=filterByTier(b,wrTierFilter);
   }
   const runSearch=(document.getElementById("wr-run-search")||{}).value||"";
   let runs=[...builds];
