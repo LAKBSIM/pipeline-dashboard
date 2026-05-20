@@ -240,6 +240,31 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
 .bc-kv{font-size:15px;font-weight:500;}
 .bc-kl{font-size:10px;color:var(--text2);}
 .pb-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:3px;}
+
+/* tier badges */
+.tier-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;}
+.tier-critical{background:#FCEBEB;color:#A32D2D;border:0.5px solid #F7C1C1;}
+.tier-standard{background:#E6F1FB;color:#185FA5;border:0.5px solid #B5D4F4;}
+.tier-monitor{background:var(--bg2);color:var(--text2);border:0.5px solid var(--border2);}
+
+/* active failures panel */
+.fail-panel{background:var(--bg);border:0.5px solid #F7C1C1;border-radius:var(--radius-lg);margin-bottom:1.25rem;overflow:hidden;}
+.fail-panel-hdr{background:var(--danger-bg);padding:.65rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.fail-panel-title{font-size:12px;font-weight:500;color:var(--danger);display:flex;align-items:center;gap:6px;}
+.fail-item{display:flex;align-items:center;gap:10px;padding:10px 1rem;border-bottom:0.5px solid var(--border);flex-wrap:wrap;}
+.fail-item:last-child{border-bottom:none;}
+.fail-item-name{font-size:12px;font-weight:500;flex:1;min-width:140px;}
+.fail-item-meta{font-size:11px;color:var(--text2);white-space:nowrap;}
+.fail-reason{font-size:11px;color:var(--danger);background:var(--danger-bg);padding:2px 8px;border-radius:20px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* timeline drill-down rows */
+.tl-row td{background:var(--bg2);padding:8px 8px 8px 28px;border-bottom:0.5px solid var(--border);font-size:11px;}
+.tl-stage{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:0.5px solid var(--border);}
+.tl-stage:last-child{border-bottom:none;}
+.tl-stage-name{font-weight:500;min-width:150px;flex-shrink:0;}
+.tl-stage-err{color:var(--danger);line-height:1.5;}
+.tl-expand-btn{background:none;border:0.5px solid var(--danger);border-radius:20px;padding:1px 8px;font-size:10px;color:var(--danger);cursor:pointer;white-space:nowrap;}
+.tl-expand-btn:hover{background:var(--danger-bg);}
 </style>
 </head>
 <body>
@@ -578,6 +603,17 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
       <span class="time-val" id="wr-time-val">Last 24 hours</span>
     </div>
 
+    <div class="time-bar" style="margin-bottom:1.25rem;" id="wr-tier-bar">
+      <span class="time-label"><i class="ti ti-layers-subtract" style="font-size:12px;vertical-align:-1px;margin-right:4px;"></i>Pipeline tier</span>
+      <div class="time-pills">
+        <button class="tp active" id="tier-all" onclick="setWRTier('all')">All tiers</button>
+        <button class="tp" id="tier-critical" onclick="setWRTier('critical')" style="color:#A32D2D;">⚠ Critical</button>
+        <button class="tp" id="tier-standard" onclick="setWRTier('standard')" style="color:#185FA5;">Standard</button>
+        <button class="tp" id="tier-monitor" onclick="setWRTier('monitor')">Monitor</button>
+      </div>
+      <span class="time-val" id="wr-tier-val">All tiers</span>
+    </div>
+
     <div class="kpi-grid" id="wr-kpis"></div>
     <div class="wr-insight"><span><i class="ti ti-sparkles" style="font-size:10px;vertical-align:-1px;margin-right:3px;"></i>War Room intel</span><span id="wr-insight-txt">Loading...</span></div>
 
@@ -592,6 +628,8 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
     </div>
 
     <div id="wr-branch-section"></div>
+
+    <div id="wr-failures-panel"></div>
 
     <div class="card-full">
       <div class="table-search-bar">
@@ -623,7 +661,7 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
         </div>
       </div>
       <table class="tbl"><thead><tr>
-        <th>Run ID</th><th>Pipeline</th><th>Links</th><th>Repo</th><th>Branch</th><th>Triggered by</th><th>Duration</th><th>Result</th><th>Failure reason</th>
+        <th style="width:20px;"></th><th>Run ID</th><th>Pipeline</th><th>Links</th><th>Repo</th><th>Branch</th><th>Triggered by</th><th>Duration</th><th>Result</th><th>Failure reason</th>
       </tr></thead><tbody id="wr-recent-tbody"></tbody></table>
       <div class="pagination" id="wr-run-pg"></div>
     </div>
@@ -639,35 +677,22 @@ const ORG     = "SimCorpCloud";
 const PROJECT = "Project Unicorn";
 const PAGE_SIZE = 50;
 
-// 25002500 Pipeline filter 2014 only show these pipeline IDs 25002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
-// Add more IDs here once you get them from ADO
-// Pipeline name filter — show only pipelines matching these exact names
-// From your ADO tenant-gain folder — add/remove names as needed
-const ALLOWED_PIPELINE_NAMES = new Set([
-  "Fetch_UserDetails-GAIN",
-  "tenant-datamanagement-wiki-daily-sync",
-  "Tenant-gain-API",
-  "tenant-gain-copy-release",
-  "tenant-gain-delete-stale-AD-groups",
-  "tenant-gain-deployment-prereq",
-  "tenant-gain-deployment",
-  "tenant-gain-documentation",
-  "tenant-gain-environment-creation",
-  "tenant-gain-git-version",
-  "tenant-gain-import",
-  "tenant-gain-kobold-deployment",
-  "tenant-gain-onboarding",
-  "tenant-gain-orchestrator",
-  "tenant-gain-pr",
-  "tenant-gain-replication",
-  "tenant-gain-teardown-prereq",
-  "tenant-gain-teardown",
-  "tenant-gain-messagepump-deployment",
-  "tenant-gain-Network-Topology",
-]);
-
-// Keep this empty — using name filter instead
-const ALLOWED_PIPELINE_IDS = new Set();
+// ── PIPELINE CONFIG ──────────────────────────────────────────────
+// Three tiers — add/remove pipelines here, names must match ADO exactly.
+//   critical  — deployment chain, alert immediately on failure
+//   standard  — release & infrastructure pipelines
+//   monitor   — supporting / low-frequency pipelines
+const PIPELINE_CONFIG = [
+  { name: "tenant-gain-deployment",             tier: "critical" },
+  { name: "tenant-gain-deployment-prereq",      tier: "critical" },
+  { name: "tenant-gain-orchestrator",           tier: "critical" },
+  { name: "tenant-gain-onboarding",             tier: "critical" },
+  { name: "tenant-gain-environment-creation",   tier: "critical" },
+  { name: "tenant-gain-messagepump-deployment", tier: "standard" },
+  { name: "tenant-gain-delete-stale-AD-groups", tier: "monitor"  },
+];
+const PIPELINE_TIER = Object.fromEntries(PIPELINE_CONFIG.map(p=>[p.name.toLowerCase(), p.tier]));
+const ALLOWED_PIPELINE_NAMES = new Set(PIPELINE_CONFIG.map(p=>p.name.toLowerCase()));
 
 // 25002500 Links 250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500250025002500
 const WIKI_URL = "https://dev.azure.com/SimCorpCloud/DevOps-IE/_wiki/wikis/DevOps-IE.wiki/131148/%F0%9F%93%96-Wiki-Guide";
@@ -697,6 +722,8 @@ let ccPeriodIdx   = 1;
 let wrTimeIdx     = 1; // default 24h — tenant-gain runs daily
 let wrBranch      = "all";
 let wrExpanded    = {};
+let wrTierFilter  = "all";
+let wrRunTimeline = {};
 let ccTrendTab    = 0;
 let ccCharts      = [];
 let wrCharts      = [];
@@ -923,16 +950,8 @@ function groupByPipeline(builds){
 function filteredBuilds(timeIdx,branch="all"){
   const minTime=new Date(Date.now()-TIME_RANGES[timeIdx].hours*3600000);
   return adoData.builds.filter(b=>{
-    // Filter to allowed pipeline IDs only
-    // Filter by pipeline name prefix — show tenant-gain, tenant-onboarding, gain-scripts
     const pname = (b.definition?.name || "").toLowerCase();
-    const isAllowed = pname.startsWith("tenant-gain")
-      || pname.startsWith("tenant-onboarding")
-      || pname.startsWith("gain-scripts")
-      || pname.includes("fetch_userdetails-gain")
-      || pname.includes("tenant-datamanagement-wiki")
-      || pname.includes("tenant-gain-api");
-    if(!isAllowed) return false;
+    if(!ALLOWED_PIPELINE_NAMES.has(pname)) return false;
     if(!buildMatchesRepoFilter(b)) return false;
     const inTime=new Date(b.finishTime||b.queueTime)>=minTime;
     if(!inTime) return false;
@@ -955,6 +974,76 @@ function applyGlobalSearch(builds, searchTerm){
     const reason = (b.reason||"").toLowerCase();
     return pipe.includes(q)||repo.includes(q)||branch.includes(q)||by.includes(q)||reason.includes(q);
   });
+}
+
+function filterByTier(builds, tier){
+  if(tier==="all") return builds;
+  return builds.filter(b=>(PIPELINE_TIER[(b.definition?.name||"").toLowerCase()]||"monitor")===tier);
+}
+
+function setWRTier(tier){
+  wrTierFilter=tier;
+  ["all","critical","standard","monitor"].forEach(t=>{
+    const el=document.getElementById("tier-"+t);
+    if(el) el.classList.toggle("active",t===tier);
+  });
+  const labels={all:"All tiers",critical:"Critical pipelines",standard:"Standard pipelines",monitor:"Monitor pipelines"};
+  const v=document.getElementById("wr-tier-val");
+  if(v) v.textContent=labels[tier]||"All tiers";
+  wrPipePage=1;wrRunPage=1;
+  renderWR();
+}
+
+function renderActiveFailures(builds){
+  const el=document.getElementById("wr-failures-panel");
+  if(!el) return;
+  const failed=builds.filter(b=>b.result==="failed");
+  if(!failed.length){el.innerHTML="";return;}
+  const byPipe=groupByPipeline(failed);
+  const entries=Object.entries(byPipe)
+    .map(([name,pBuilds])=>({name,pBuilds,count:pBuilds.length,last:pBuilds[0]}))
+    .sort((a,b)=>{
+      const ta=PIPELINE_TIER[a.name.toLowerCase()]||"monitor";
+      const tb=PIPELINE_TIER[b.name.toLowerCase()]||"monitor";
+      const order={critical:0,standard:1,monitor:2};
+      return (order[ta]-order[tb])||b.count-a.count;
+    });
+  el.innerHTML=`<div class="fail-panel">
+    <div class="fail-panel-hdr">
+      <span class="fail-panel-title"><i class="ti ti-alert-circle" style="font-size:13px;"></i>Active failures &mdash; ${failed.length} failed run${failed.length!==1?"s":""} across ${entries.length} pipeline${entries.length!==1?"s":""}</span>
+      <span style="font-size:11px;color:var(--danger);opacity:.7;">${TIME_RANGES[wrTimeIdx].label}</span>
+    </div>
+    ${entries.map(({name,pBuilds,count,last})=>{
+      const tier=PIPELINE_TIER[name.toLowerCase()]||"monitor";
+      const pipeId=last?.definition?.id||"";
+      const pipeLink=pipeId?`${PIPELINE_BASE}${pipeId}`:"";
+      const lastReason=last?.reason||"";
+      const lastTime=last?.finishTime?new Date(last.finishTime).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"—";
+      const shortName=name.length>32?name.slice(0,32)+"…":name;
+      return `<div class="fail-item">
+        <span class="tier-badge tier-${tier}">${tier==="critical"?"⚠ "+tier:tier}</span>
+        <span class="fail-item-name" title="${name}">${shortName}</span>
+        <span class="fail-item-meta">${count} failure${count!==1?"s":""}</span>
+        <span class="fail-item-meta">Last: ${lastTime}</span>
+        ${lastReason?`<span class="fail-reason" title="${lastReason}">${lastReason}</span>`:""}
+        ${pipeLink?`<a href="${pipeLink}" target="_blank" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--info);text-decoration:none;background:var(--info-bg);padding:2px 8px;border-radius:20px;flex-shrink:0;"><i class="ti ti-external-link" style="font-size:10px;"></i>View in ADO</a>`:""}
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+async function fetchRunTimeline(buildId){
+  wrRunTimeline[buildId]={loading:true};
+  renderWRRunsTable();
+  try{
+    const data=await fetchADO("timeline",`&buildId=${buildId}`);
+    const records=(data.records||data||[]);
+    const failed=records.filter(r=>r.result==="failed"&&(r.type==="Stage"||r.type==="Job"||r.type==="Task"));
+    wrRunTimeline[buildId]={records:failed.length?failed:records.filter(r=>r.result==="failed")};
+  }catch(e){
+    wrRunTimeline[buildId]={error:e.message};
+  }
+  renderWRRunsTable();
 }
 
 function makePagination(total, page, pageSize, onPage){
@@ -1179,6 +1268,7 @@ function renderWR(){
   const gsearch=(document.getElementById("wr-global-search")||{}).value||"";
   let builds=filteredBuilds(wrTimeIdx,wrBranch);
   builds=applyGlobalSearch(builds,gsearch);
+  builds=filterByTier(builds,wrTierFilter);
   const s=calcStats(builds);
   const byPipe=groupByPipeline(builds);
 
@@ -1262,6 +1352,7 @@ function renderWR(){
     document.getElementById("wr-branch-section").innerHTML="";
   }
 
+  renderActiveFailures(builds);
   renderWRPipeTable(builds,byPipe);
   renderWRRunsTable(builds);
 }
@@ -1301,9 +1392,10 @@ function renderWRPipeTable(builds,byPipe){
     const last=pBuilds[0];
     const pipeId = pBuilds[0]?.definition?.id || "";
     const pipeLink = pipeId ? `${PIPELINE_BASE}${pipeId}` : "";
+    const pipeTier=PIPELINE_TIER[name.toLowerCase()]||"monitor";
     html+=`<tr style="cursor:pointer;" onclick="toggleWRExp('${eid}')">
       <td><button class="exp-btn"><i class="ti ti-chevron-${isOpen?"down":"right"}" style="font-size:12px;"></i></button></td>
-      <td style="font-weight:500;">${name}</td>
+      <td><div style="display:flex;flex-direction:column;gap:3px;"><span style="font-weight:500;">${name}</span><span class="tier-badge tier-${pipeTier}" style="font-size:9px;padding:1px 6px;align-self:flex-start;">${pipeTier==="critical"?"⚠ "+pipeTier:pipeTier}</span></div></td>
       <td style="white-space:nowrap;">
         ${pipeLink?`<a href="${pipeLink}" target="_blank" onclick="event.stopPropagation()" title="Open pipeline in Azure DevOps" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--info);text-decoration:none;background:var(--info-bg);padding:2px 7px;border-radius:20px;"><i class="ti ti-external-link" style="font-size:11px;"></i>Pipeline</a>`:""}
         <a href="${WIKI_URL}" target="_blank" onclick="event.stopPropagation()" title="Open Wiki guide" style="display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--success);text-decoration:none;background:var(--success-bg);padding:2px 7px;border-radius:20px;margin-left:4px;"><i class="ti ti-book" style="font-size:11px;"></i>Wiki</a>
@@ -1363,16 +1455,21 @@ function renderWRRunsTable(builds){
   const pageRuns=runs.slice(start,start+PAGE_SIZE);
   const repo_=b=>repoFromBuild(b);
 
-  document.getElementById("wr-recent-tbody").innerHTML=pageRuns.map(b=>{
+  const rows=[];
+  pageRuns.forEach(b=>{
     const br=parseBranch(b.sourceBranch);
     const repo=repo_(b);
     const rc=repoClass(repo);
     const dur=b.durationMin?b.durationMin+"m":"—";
-    const runPipeId = b.definition?.id || "";
-    const runPipeLink = runPipeId ? `${PIPELINE_BASE}${runPipeId}` : "";
-    return `<tr>
+    const runPipeId=b.definition?.id||"";
+    const runPipeLink=runPipeId?`${PIPELINE_BASE}${runPipeId}`:"";
+    const isFailed=b.result==="failed";
+    const tl=wrRunTimeline[b.id];
+    const expandCell=isFailed?`<td><button class="tl-expand-btn" onclick="event.stopPropagation();${tl?`delete wrRunTimeline[${b.id}];renderWRRunsTable()`:`fetchRunTimeline(${b.id})`}">${tl?"▲ Hide":"▼ Stage"}</button></td>`:`<td></td>`;
+    rows.push(`<tr>
+      ${expandCell}
       <td style="font-family:monospace;font-size:11px;font-weight:500;">#${b.id}</td>
-      <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${b.definition?.name||""}">${b.definition?.name||"—"}</td>
+      <td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${b.definition?.name||""}">${b.definition?.name||"—"}</td>
       <td style="white-space:nowrap;">
         ${runPipeLink?`<a href="${runPipeLink}" target="_blank" title="Open in Azure DevOps" style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--info);text-decoration:none;background:var(--info-bg);padding:2px 6px;border-radius:20px;"><i class="ti ti-external-link" style="font-size:10px;"></i>Pipeline</a>`:""}
         <a href="${WIKI_URL}" target="_blank" title="Open Wiki guide" style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--success);text-decoration:none;background:var(--success-bg);padding:2px 6px;border-radius:20px;margin-left:3px;"><i class="ti ti-book" style="font-size:10px;"></i>Wiki</a>
@@ -1383,8 +1480,29 @@ function renderWRRunsTable(builds){
       <td style="color:var(--text2);font-size:11px;">${dur}</td>
       <td><span class="badge ${resultClass(b.result)}">${resultLabel(b.result)}</span></td>
       <td style="color:${b.reason?"var(--danger)":"var(--text2)"};font-size:11px;">${b.reason||"—"}</td>
-    </tr>`;
-  }).join("");
+    </tr>`);
+    if(isFailed&&tl){
+      let tlContent;
+      if(tl.loading){
+        tlContent=`<div style="color:var(--text2);padding:6px 0;"><i class="ti ti-loader" style="animation:spin .8s linear infinite;font-size:12px;vertical-align:-2px;margin-right:6px;"></i>Loading stage details...</div>`;
+      }else if(tl.error){
+        tlContent=`<div style="color:var(--danger);">Could not load timeline: ${tl.error}</div>`;
+      }else if(!tl.records?.length){
+        tlContent=`<div style="color:var(--text2);">No failed stage records found in timeline.</div>`;
+      }else{
+        tlContent=tl.records.map(r=>{
+          const issues=(r.issues||[]).filter(i=>i.type==="error").map(i=>`<div style="margin-top:2px;">↳ ${i.message}</div>`).join("");
+          return `<div class="tl-stage">
+            <span class="badge bd" style="flex-shrink:0;">${r.type||"Stage"}</span>
+            <span class="tl-stage-name">${r.name||"—"}</span>
+            <span class="tl-stage-err">${r.errorCount?r.errorCount+" error(s)":"Failed"}${issues}</span>
+          </div>`;
+        }).join("");
+      }
+      rows.push(`<tr class="tl-row"><td colspan="10"><div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:6px;"><i class="ti ti-git-branch" style="font-size:11px;vertical-align:-1px;margin-right:4px;"></i>Stage details for run #${b.id}</div>${tlContent}</td></tr>`);
+    }
+  });
+  document.getElementById("wr-recent-tbody").innerHTML=rows.join("");
 
   document.getElementById("wr-run-pg").innerHTML=makePagination(total,wrRunPage,PAGE_SIZE,"p=>{ window.wrRunPage=p; renderWRRunsTable(); }");
 }
