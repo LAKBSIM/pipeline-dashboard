@@ -178,15 +178,15 @@ async function loadData(){
     const defIds=PIPELINE_DEFINITION_IDS.length?`&definitionIds=${PIPELINE_DEFINITION_IDS.join(",")}`:"";
     const summary=await fetchADO("summary",defIds);
     adoData.pipelines=summary.pipelines||[];
-    adoData.builds=summary.builds||[];
-    if(adoData.builds.length > 0){
-      const repoSet = new Set(adoData.builds.map(b=>b.repository?.name||"unknown"));
-      const pipeMap = {};
-      adoData.builds.forEach(b=>{ pipeMap[b.definition?.name||"unknown"]=b.repository?.name||"unknown"; });
-      console.log("Total builds:", adoData.builds.length);
-      console.log("Unique repos:", [...repoSet]);
-      console.log("Pipeline → Repo mapping:", JSON.stringify(pipeMap, null, 2));
-    }
+    adoData.builds=(summary.builds||[]).map(b=>{
+      if((!b.durationMin||b.durationMin===0)&&b.startTime&&b.finishTime)
+        b.durationMin=Math.max(1,Math.round((new Date(b.finishTime)-new Date(b.startTime))/60000));
+      return b;
+    });
+    const pipeNames=[...new Set(adoData.builds.map(b=>b.definition?.name||"unknown"))];
+    console.log("Total builds from ADO:",adoData.builds.length);
+    console.log("Pipelines in response:",pipeNames);
+    console.log("Sample durations:",adoData.builds.slice(0,5).map(b=>({pipe:b.definition?.name,dur:b.durationMin})));
     adoData.pipelines.slice(0,5).forEach((p,i)=>{
       const el=document.getElementById(`svgP${i+1}`);
       if(el) el.textContent=p.name||"";
@@ -232,7 +232,7 @@ function getDemoData(){
 // ═══════════════════════════════════════════════
 //  DATA HELPERS
 // ═══════════════════════════════════════════════
-function parseBranch(ref){return(ref||"").replace("refs/heads/","");}
+function parseBranch(ref){return(ref||"").replace(/^refs\/(heads|tags)\//,"");}
 function branchType(b){if(b==="main"||b==="master")return"main";if(b.startsWith("hotfix/"))return"hotfix";return"feature";}
 function branchClass(b){const t=branchType(b);return t==="main"?"main":t==="hotfix"?"hotfix":"feat";}
 function rateColor(r){return r>=90?"#639922":r>=75?"#BA7517":"#E24B4A";}
