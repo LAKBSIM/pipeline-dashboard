@@ -12,11 +12,11 @@ const PAGE_SIZE = 50;
 //   standard  — release & infrastructure pipelines
 //   monitor   — supporting / low-frequency pipelines
 const PIPELINE_CONFIG = [
-  { name: "tenant-gain-deployment",             tier: "critical" },
-  { name: "tenant-gain-deployment-prereq",      tier: "critical" },
+  { name: "tenant-gain-deployment",             tier: "critical", definitionId: 1057 },
+  { name: "tenant-gain-deployment-prereq",      tier: "critical", definitionId: 2961 },
   { name: "tenant-gain-orchestrator",           tier: "critical" },
   { name: "tenant-gain-onboarding",             tier: "critical" },
-  { name: "tenant-gain-environment-creation",   tier: "critical" },
+  { name: "tenant-gain-environment-creation",   tier: "critical", definitionId: 6919 },
   { name: "tenant-gain-replication",            tier: "critical" },
   { name: "tenant-gain-messagepump-deployment", tier: "standard" },
   { name: "tenant-gain-Network-Topology",       tier: "monitor"  },
@@ -24,6 +24,8 @@ const PIPELINE_CONFIG = [
 ];
 const PIPELINE_TIER = Object.fromEntries(PIPELINE_CONFIG.map(p=>[p.name.toLowerCase(), p.tier]));
 const ALLOWED_PIPELINE_NAMES = new Set(PIPELINE_CONFIG.map(p=>p.name.toLowerCase()));
+// Definition IDs known so far — passed to Azure Function so ADO returns the right builds
+const PIPELINE_DEFINITION_IDS = PIPELINE_CONFIG.filter(p=>p.definitionId).map(p=>p.definitionId);
 
 const WIKI_URL = "https://dev.azure.com/SimCorpCloud/DevOps-IE/_wiki/wikis/DevOps-IE.wiki/131148/%F0%9F%93%96-Wiki-Guide";
 const PIPELINE_BASE = "https://dev.azure.com/SimCorpCloud/Project%20Unicorn/_build?definitionId=";
@@ -173,7 +175,8 @@ async function fetchADO(endpoint,extra=""){
 async function loadData(){
   showLoading("Fetching live data from Simcorp DMCore · Azure DevOps...");
   try{
-    const summary=await fetchADO("summary");
+    const defIds=PIPELINE_DEFINITION_IDS.length?`&definitionIds=${PIPELINE_DEFINITION_IDS.join(",")}`:"";
+    const summary=await fetchADO("summary",defIds);
     adoData.pipelines=summary.pipelines||[];
     adoData.builds=summary.builds||[];
     if(adoData.builds.length > 0){
