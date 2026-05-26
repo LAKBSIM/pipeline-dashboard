@@ -50,7 +50,9 @@ function renderCC(){
     </div>`).join("");
 
   const cpm=0.05;
+  const totalCost=Math.round(s.total*s.avgDur*cpm);
   const wasted=Math.round(s.fail*1.4*s.avgDur*cpm);
+  const valuable=Math.round(s.succ*s.avgDur*cpm);
 
   // ── PERIOD COMPARISON ──────────────────────────
   const periodHours=TIME_RANGES[timeIdx].hours;
@@ -110,23 +112,40 @@ function renderCC(){
   const engDays=Math.round(agentH/8);
   const reruns=Math.round(s.fail*1.4);
   const saved=Math.round(wasted*0.58);
-  document.getElementById("cc-cost-sub").textContent=`${TIME_RANGES[periodToTime[ccPeriodIdx]].label} · Agent compute waste`;
+  document.getElementById("cc-cost-sub").textContent=`${TIME_RANGES[periodToTime[ccPeriodIdx]].label} · Agent compute cost breakdown`;
   document.getElementById("cc-cost-kpis").innerHTML=`
-    <div class="ck"><p class="ck-val" style="color:var(--danger);">$${wasted.toLocaleString()}</p><p class="ck-lbl">Cost of failed runs</p></div>
-    <div class="ck"><p class="ck-val" style="color:var(--warn);">${agentH}h</p><p class="ck-lbl">Agent hours wasted</p></div>
-    <div class="ck"><p class="ck-val" style="color:var(--warn);">${reruns.toLocaleString()}</p><p class="ck-lbl">Re-run executions</p></div>
-    <div class="ck"><p class="ck-val" style="color:var(--danger);">${engDays}d</p><p class="ck-lbl">Engineer time lost</p></div>
-    <div class="ck"><p class="ck-val" style="color:var(--success);">$${saved.toLocaleString()}</p><p class="ck-lbl">Potential savings</p></div>`;
+    <div class="ck" style="border-top:3px solid var(--info);">
+      <p class="ck-val" style="color:var(--info);">$${totalCost.toLocaleString()}</p>
+      <p class="ck-lbl">Total execution cost</p>
+      <p style="font-size:10px;color:var(--text3);margin-top:2px;">${s.total} runs × ${s.avgDur}m avg</p>
+    </div>
+    <div class="ck" style="border-top:3px solid var(--success);">
+      <p class="ck-val" style="color:var(--success);">$${valuable.toLocaleString()}</p>
+      <p class="ck-lbl">Valuable (successful runs)</p>
+      <p style="font-size:10px;color:var(--text3);margin-top:2px;">${s.succ} successful runs</p>
+    </div>
+    <div class="ck" style="border-top:3px solid var(--danger);">
+      <p class="ck-val" style="color:var(--danger);">$${wasted.toLocaleString()}</p>
+      <p class="ck-lbl">Wasted (failed runs)</p>
+      <p style="font-size:10px;color:var(--text3);margin-top:2px;">${s.fail} failures × 1.4 reruns</p>
+    </div>
+    <div class="ck" style="border-top:3px solid var(--warn);">
+      <p class="ck-val" style="color:var(--warn);">${agentH}h / ${engDays}d</p>
+      <p class="ck-lbl">Agent hours / Eng. time lost</p>
+    </div>
+    <div class="ck" style="border-top:3px solid var(--success);">
+      <p class="ck-val" style="color:var(--success);">$${saved.toLocaleString()}</p>
+      <p class="ck-lbl">Potential savings</p>
+    </div>`;
   document.getElementById("cc-cost-flow").innerHTML=`
-    <div class="flow-step"><p class="flow-val" style="color:var(--danger);">${s.fail.toLocaleString()}</p><p class="flow-lbl">Failures</p></div>
+    <div class="flow-step" style="border-top:3px solid var(--info);"><p class="flow-val" style="color:var(--info);">$${totalCost.toLocaleString()}</p><p class="flow-lbl">Total cost</p></div>
     <div class="flow-arr"><i class="ti ti-arrow-right"></i></div>
-    <div class="flow-step"><p class="flow-val" style="color:var(--warn);">${reruns.toLocaleString()}</p><p class="flow-lbl">Re-runs</p></div>
-    <div class="flow-arr"><i class="ti ti-arrow-right"></i></div>
-    <div class="flow-step"><p class="flow-val" style="color:var(--warn);">${agentH}h</p><p class="flow-lbl">Agent hours</p></div>
-    <div class="flow-arr"><i class="ti ti-arrow-right"></i></div>
-    <div class="flow-step"><p class="flow-val" style="color:var(--warn);">${engDays}d</p><p class="flow-lbl">Eng. time lost</p></div>
-    <div class="flow-arr"><i class="ti ti-arrow-right"></i></div>
-    <div class="flow-step"><p class="flow-val" style="color:var(--danger);">$${wasted.toLocaleString()}</p><p class="flow-lbl">Total wasted</p></div>`;
+    <div class="flow-step" style="border-top:3px solid var(--success);"><p class="flow-val" style="color:var(--success);">$${valuable.toLocaleString()}</p><p class="flow-lbl">Valuable</p></div>
+    <div class="flow-arr"><i class="ti ti-plus" style="font-size:11px;"></i></div>
+    <div class="flow-step" style="border-top:3px solid var(--danger);"><p class="flow-val" style="color:var(--danger);">$${wasted.toLocaleString()}</p><p class="flow-lbl">Wasted</p></div>
+    <div style="flex:1;"></div>
+    ${s.fail>0?`<button onclick="goWR()" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;border:0.5px solid #F7C1C1;background:var(--danger-bg);color:var(--danger);font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0;"><i class="ti ti-radar" style="font-size:13px;"></i>View ${s.fail} failures in War Room</button>`:""}
+  `;
 
   document.getElementById("s1").value=Math.round((s.fail/Math.max(1,s.total))*100);
   document.getElementById("s4").value=Math.min(3000,s.total);

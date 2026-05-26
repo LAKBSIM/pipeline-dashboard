@@ -1,6 +1,18 @@
 // ═══════════════════════════════════════════════
 //  WAR ROOM
 // ═══════════════════════════════════════════════
+function refreshWR(){
+  const btn=document.getElementById("wr-refresh-btn");
+  const icon=document.getElementById("wr-refresh-icon");
+  if(btn) btn.disabled=true;
+  if(icon) icon.style.animation="spin .6s linear infinite";
+  loadData().then(()=>{
+    buildRepoList();renderRepoPills("wr");renderWR();
+    if(btn) btn.disabled=false;
+    if(icon) icon.style.animation="";
+  });
+}
+
 function setWRTime(i){
   wrTimeIdx=i;
   document.querySelectorAll("#wr-time-range-bar .tp").forEach((el,idx)=>el.classList.toggle("active",idx===i));

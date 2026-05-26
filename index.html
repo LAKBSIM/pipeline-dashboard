@@ -604,15 +604,16 @@ input[type=text]:focus,input[type=search]:focus,select:focus{outline:none;border
       <span class="time-label"><i class="ti ti-clock" style="font-size:12px;vertical-align:-1px;margin-right:4px;"></i>Time range</span>
       <div class="time-pills">
         <button class="tp" onclick="setWRTime(0)">6h</button>
-        <button class="tp active" onclick="setWRTime(1)">24h</button>
+        <button class="tp" onclick="setWRTime(1)">24h</button>
         <button class="tp" onclick="setWRTime(2)">3d</button>
-        <button class="tp" onclick="setWRTime(3)">7d</button>
+        <button class="tp active" onclick="setWRTime(3)">7d</button>
         <button class="tp" onclick="setWRTime(4)">14d</button>
         <button class="tp" onclick="setWRTime(5)">30d</button>
         <button class="tp" onclick="setWRTime(6)">60d</button>
         <button class="tp" onclick="setWRTime(7)">90d</button>
       </div>
-      <span class="time-val" id="wr-time-val">Last 24 hours</span>
+      <span class="time-val" id="wr-time-val">Last 7 days</span>
+      <button id="wr-refresh-btn" onclick="refreshWR()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;font-size:11px;color:var(--text2);cursor:pointer;flex-shrink:0;" title="Refresh data"><i class="ti ti-refresh" id="wr-refresh-icon" style="font-size:12px;"></i>Refresh</button>
     </div>
 
     <div class="time-bar" style="margin-bottom:1.25rem;" id="wr-tier-bar">

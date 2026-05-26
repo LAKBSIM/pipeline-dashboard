@@ -17,7 +17,9 @@ const PIPELINE_CONFIG = [
   { name: "tenant-gain-orchestrator",           tier: "critical" },
   { name: "tenant-gain-onboarding",             tier: "critical" },
   { name: "tenant-gain-environment-creation",   tier: "critical" },
+  { name: "tenant-gain-replication",            tier: "critical" },
   { name: "tenant-gain-messagepump-deployment", tier: "standard" },
+  { name: "tenant-gain-Network-Topology",       tier: "monitor"  },
   { name: "tenant-gain-delete-stale-AD-groups", tier: "monitor"  },
 ];
 const PIPELINE_TIER = Object.fromEntries(PIPELINE_CONFIG.map(p=>[p.name.toLowerCase(), p.tier]));
@@ -45,7 +47,7 @@ let adoData       = {pipelines:[],builds:[]};
 let allRepos      = [];
 let selectedRepos = new Set(["all"]);
 let ccPeriodIdx   = 1;
-let wrTimeIdx     = 1;
+let wrTimeIdx     = 3;
 let wrBranch      = "all";
 let wrExpanded    = {};
 let wrTierFilter  = "all";
